@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1400</width>
-    <height>800</height>
+    <height>890</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,12 +25,12 @@
       </property>
       <property name="iconSize">
        <size>
-        <width>0</width>
-        <height>0</height>
+        <width>40</width>
+        <height>40</height>
        </size>
       </property>
       <property name="viewMode">
-       <enum>QListView::ListMode</enum>
+       <enum>QListView::IconMode</enum>
       </property>
      </widget>
     </item>
@@ -45,7 +45,7 @@
          <x>0</x>
          <y>0</y>
          <width>968</width>
-         <height>723</height>
+         <height>813</height>
         </rect>
        </property>
       </widget>

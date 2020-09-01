@@ -21,11 +21,11 @@ MainWindow::~MainWindow()
 void MainWindow::initLeftControlsList()
 {
     QStringList controls;
-    controls << "******图形******" << "列表" << "树" << "表格" << "柱状图" << "饼图";
-    controls << "******容器******" << "Group Box" << "Scroll Area" << "Tab Widget" << "Stacked Widget" << "Frame";
-    controls << "******按钮******" << "Push Button" << "Radio Button" << "Check Box";
-    controls << "******输入******" << "Combo Box" << "Line Edit" << "Text Edit" << "Spin Box" << "Date/Time Edit";
-    controls << "******显示******" << "Label" << "LCD Number" << "Progress Bar" << "Horizontal Line" << "Vertical Line";
+    controls << "**********图形**********" << "列表" << "树" << "表格" << "柱状图" << "饼图";
+    controls << "**********容器**********" << "Group Box" << "Scroll Area" << "Tab Widget" << "Stacked Widget" << "Frame";
+    controls << "**********按钮**********" << "Push Button" << "Radio Button" << "Check Box";
+    controls << "**********输入**********" << "Combo Box" << "Line Edit" << "Text Edit" << "Spin Box" << "Date/Time Edit";
+    controls << "**********显示**********" << "Label" << "LCD Number" << "Progress Bar" << "Horizontal Line" << "Vertical Line";
 
     ui->listWidget_controls->clear();
     for(int i = 0 ; i < controls.count(); i ++)
@@ -34,8 +34,16 @@ void MainWindow::initLeftControlsList()
         QListWidgetItem *item;
         item = new QListWidgetItem();
         QPixmap pixmap;
-        pixmap.load("image/list.png");
-        item->setIcon(QIcon(pixmap));
+        pixmap.load(":/image/list.png");
+        if(info.contains("*"))
+        {
+            item->setFlags(Qt::NoItemFlags);
+        }
+        else
+        {
+            item->setIcon(QIcon(pixmap));
+            item->setFlags(Qt::ItemIsEnabled);
+        }
         item->setText(info);
         ui->listWidget_controls->addItem(item);
     }

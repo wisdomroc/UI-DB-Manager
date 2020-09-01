@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>image/list.png</file>
+        <file>image/table.png</file>
+        <file>image/tree.png</file>
+        <file>image/tupu.png</file>
     </qresource>
 </RCC>

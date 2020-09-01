@@ -55,7 +55,7 @@
 #include <QMimeData>
 
 PiecesList::PiecesList(QWidget *parent)
-    : QListWidget(parent), m_PieceSize(64)
+    : QListWidget(parent), m_PieceSize(40)
 {
     setDragEnabled(true);
     setViewMode(QListView::IconMode);
@@ -130,5 +130,7 @@ void PiecesList::startDrag(Qt::DropActions /*supportedActions*/)
     drag->setPixmap(pixmap);
 
     if (drag->exec(Qt::MoveAction) == Qt::MoveAction)
-        delete takeItem(row(item));
+    {
+        //delete takeItem(row(item));
+    }
 }
