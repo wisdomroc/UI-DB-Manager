@@ -39,4 +39,6 @@ void MainWindow::initLeftControlsList()
         item->setText(info);
         ui->listWidget_controls->addItem(item);
     }
+
+
 }
