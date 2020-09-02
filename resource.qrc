@@ -4,5 +4,7 @@
         <file>image/table.png</file>
         <file>image/tree.png</file>
         <file>image/tupu.png</file>
+        <file>image/columnchart.png</file>
+        <file>image/piechart.png</file>
     </qresource>
 </RCC>

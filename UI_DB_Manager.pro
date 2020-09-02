@@ -27,11 +27,13 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    pieceslist.cpp
+    pieceslist.cpp \
+    dropwidget.cpp
 
 HEADERS += \
         mainwindow.h \
-    pieceslist.h
+    pieceslist.h \
+    dropwidget.h
 
 FORMS += \
         mainwindow.ui

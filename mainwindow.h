@@ -7,6 +7,10 @@ namespace Ui {
 class MainWindow;
 }
 
+using namespace std;
+extern QString g_controls[];
+extern map<QString, QString> g_controlsPngMap;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -19,6 +23,7 @@ private:
     Ui::MainWindow *ui;
 
     void initLeftControlsList();
+
 };
 
 #endif // MAINWINDOW_H

@@ -89,10 +89,10 @@ void PiecesList::dropEvent(QDropEvent *event)
         QByteArray pieceData = event->mimeData()->data(PiecesList::puzzleMimeType());
         QDataStream dataStream(&pieceData, QIODevice::ReadOnly);
         QPixmap pixmap;
-        QPoint location;
+        QString location;
         dataStream >> pixmap >> location;
 
-        addPiece(pixmap, location);
+        //addPiece(pixmap, location);
 
         event->setDropAction(Qt::MoveAction);
         event->accept();
@@ -101,13 +101,21 @@ void PiecesList::dropEvent(QDropEvent *event)
     }
 }
 
-void PiecesList::addPiece(const QPixmap &pixmap, const QPoint &location)
+void PiecesList::addPiece(const QPixmap &pixmap, const QString &type)
 {
     QListWidgetItem *pieceItem = new QListWidgetItem(this);
-    pieceItem->setIcon(QIcon(pixmap));
-    pieceItem->setData(Qt::UserRole, QVariant(pixmap));
-    pieceItem->setData(Qt::UserRole+1, location);
-    pieceItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
+    pieceItem->setText(type);
+    if(type.contains("*"))
+    {
+        pieceItem->setFlags(Qt::NoItemFlags);
+    }
+    else
+    {
+        pieceItem->setIcon(QIcon(pixmap));
+        pieceItem->setData(Qt::UserRole, type);
+        pieceItem->setData(Qt::UserRole+1, QVariant(pixmap));
+        pieceItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
+    }
 }
 
 void PiecesList::startDrag(Qt::DropActions /*supportedActions*/)
@@ -116,10 +124,10 @@ void PiecesList::startDrag(Qt::DropActions /*supportedActions*/)
 
     QByteArray itemData;
     QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-    QPixmap pixmap = qvariant_cast<QPixmap>(item->data(Qt::UserRole));
-    QPoint location = item->data(Qt::UserRole+1).toPoint();
+    QString type = item->data(Qt::UserRole).toString();
+    QPixmap pixmap = qvariant_cast<QPixmap>(item->data(Qt::UserRole+1));
 
-    dataStream << pixmap << location;
+    dataStream << type << pixmap;
 
     QMimeData *mimeData = new QMimeData;
     mimeData->setData(PiecesList::puzzleMimeType(), itemData);
