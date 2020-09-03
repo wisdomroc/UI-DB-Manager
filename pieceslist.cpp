@@ -83,24 +83,6 @@ void PiecesList::dragMoveEvent(QDragMoveEvent *event)
     }
 }
 
-void PiecesList::dropEvent(QDropEvent *event)
-{
-    if (event->mimeData()->hasFormat(PiecesList::puzzleMimeType())) {
-        QByteArray pieceData = event->mimeData()->data(PiecesList::puzzleMimeType());
-        QDataStream dataStream(&pieceData, QIODevice::ReadOnly);
-        QPixmap pixmap;
-        QString location;
-        dataStream >> pixmap >> location;
-
-        //addPiece(pixmap, location);
-
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-    } else {
-        event->ignore();
-    }
-}
-
 void PiecesList::addPiece(const QPixmap &pixmap, const QString &type)
 {
     QListWidgetItem *pieceItem = new QListWidgetItem(this);

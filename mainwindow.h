@@ -1,6 +1,7 @@
 ﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "fwd.h"
 #include <QMainWindow>
 
 namespace Ui {
@@ -23,7 +24,10 @@ private:
     Ui::MainWindow *ui;
 
     void initLeftControlsList();
+    void initGraphicsView();
 
+private slots:
+    void slot_focusItemChanged(QGraphicsItem *newFocusItem, QGraphicsItem *oldFocusItem, Qt::FocusReason reason);
 };
 
 #endif // MAINWINDOW_H

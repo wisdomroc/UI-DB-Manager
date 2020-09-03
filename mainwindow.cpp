@@ -1,6 +1,5 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
 # pragma execution_character_set("utf-8")
@@ -26,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     initLeftControlsList();
-
+    initGraphicsView();
 }
 
 MainWindow::~MainWindow()
@@ -42,6 +41,19 @@ void MainWindow::initLeftControlsList()
         QString control_name = g_controls[i];
         QString control_png_name = g_controlsPngMap[control_name];
         QPixmap pixmap(tr(":/image/%1.png").arg(control_png_name));
-        ui->listWidget_controls->addPiece(pixmap, control_name);
+        ui->listWidget_controls->addPiece(pixmap, control_png_name);
     }
 }
+
+void MainWindow::initGraphicsView()
+{
+    connect(ui->graphicsView->scene(), SIGNAL(focusItemChanged(QGraphicsItem *, QGraphicsItem *, Qt::MouseFocusReason )),
+            this, SLOT(slot_focusItemChanged(QGraphicsItem *, QGraphicsItem *, Qt::MouseFocusReason )));
+
+}
+
+void MainWindow::slot_focusItemChanged(QGraphicsItem *newFocusItem, QGraphicsItem *oldFocusItem, Qt::FocusReason reason)
+{
+    qDebug() << "current Item changed ..." << endl;
+}
+

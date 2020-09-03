@@ -35,17 +35,7 @@
      </widget>
     </item>
     <item>
-     <widget class="DropWidget" name="centerWidget" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>1000</width>
-        <height>800</height>
-       </size>
-      </property>
-      <property name="acceptDrops">
-       <bool>true</bool>
-      </property>
-     </widget>
+     <widget class="DropGraphicsView" name="graphicsView"/>
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox">
@@ -686,10 +676,9 @@
    <header>pieceslist.h</header>
   </customwidget>
   <customwidget>
-   <class>DropWidget</class>
-   <extends>QWidget</extends>
-   <header>dropwidget.h</header>
-   <container>1</container>
+   <class>DropGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>dropgraphicsview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
