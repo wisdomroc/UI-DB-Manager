@@ -23,9 +23,12 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    void initUI();
     void initLeftControlsList();
     void initGraphicsView();
 
+    void zoomIn(int level);
+    void zoomOut(int level);
 private slots:
     void slot_focusItemChanged(QGraphicsItem *newFocusItem, QGraphicsItem *oldFocusItem, Qt::FocusReason reason);
 };

@@ -26,11 +26,33 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     initLeftControlsList();
     initGraphicsView();
+    initUI();
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::initUI()
+{
+    int size = style()->pixelMetric(QStyle::PM_ToolBarIconSize);
+    QSize iconSize(size, size);
+    ui->zoomSlider->setMinimum(0);
+    ui->zoomSlider->setMaximum(500);
+    ui->zoomSlider->setValue(250);
+    ui->zoomSlider->setTickPosition(QSlider::TicksRight);
+    ui->zoomInIcon->setAutoRepeat(true);
+    ui->zoomInIcon->setAutoRepeatInterval(33);
+    ui->zoomInIcon->setAutoRepeatDelay(0);
+    ui->zoomInIcon->setIcon(QPixmap(":/image/zoomin.png"));
+    ui->zoomInIcon->setIconSize(iconSize);
+    ui->zoomOutIcon->setAutoRepeat(true);
+    ui->zoomOutIcon->setAutoRepeatInterval(33);
+    ui->zoomOutIcon->setAutoRepeatDelay(0);
+    ui->zoomOutIcon->setIcon(QPixmap(":/image/zoomout.png"));
+    ui->zoomOutIcon->setIconSize(iconSize);
 }
 
 void MainWindow::initLeftControlsList()
@@ -57,3 +79,12 @@ void MainWindow::slot_focusItemChanged(QGraphicsItem *newFocusItem, QGraphicsIte
     qDebug() << "current Item changed ..." << endl;
 }
 
+void MainWindow::zoomIn(int level)
+{
+    ui->zoomSlider->setValue(ui->zoomSlider->value() + level);
+}
+
+void MainWindow::zoomOut(int level)
+{
+    ui->zoomSlider->setValue(ui->zoomSlider->value() - level);
+}

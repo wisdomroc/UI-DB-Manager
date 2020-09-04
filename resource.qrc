@@ -6,5 +6,7 @@
         <file>image/tupu.png</file>
         <file>image/columnchart.png</file>
         <file>image/piechart.png</file>
+        <file>image/zoomin.png</file>
+        <file>image/zoomout.png</file>
     </qresource>
 </RCC>

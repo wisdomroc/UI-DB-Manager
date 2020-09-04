@@ -1,12 +1,31 @@
 ﻿#include "dropgraphicsview.h"
 #include <QtWidgets>
-
-DropGraphicsView::DropGraphicsView(QWidget *parent) : QGraphicsView(parent)
+#include "chip.h"
+DropGraphicsView::DropGraphicsView(QWidget *parent) : QGraphicsView(parent), m_zoomFactor(0)
 {
     setAcceptDrops(true);
     m_scene = new DropGraphicsScene();
     setScene(m_scene);
     setSceneRect(0,0,this->width(),this->height());
+
+    setRenderHint(QPainter::Antialiasing, false);
+    setDragMode(QGraphicsView::RubberBandDrag);
+    setOptimizationFlags(QGraphicsView::DontSavePainterState);
+    setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+}
+
+void DropGraphicsView::wheelEvent(QWheelEvent *e)
+{
+    if (e->modifiers() & Qt::ControlModifier) {
+        if (e->delta() > 0)
+            zoomIn(6);
+        else
+            zoomOut(6);
+        e->accept();
+    } else {
+        QGraphicsView::wheelEvent(e);
+    }
 }
 
 void DropGraphicsView::dragEnterEvent(QDragEnterEvent *event)
@@ -15,6 +34,28 @@ void DropGraphicsView::dragEnterEvent(QDragEnterEvent *event)
         event->accept();
     else
         event->ignore();
+}
+
+void DropGraphicsView::zoomIn(int level)
+{
+    m_zoomFactor += level;
+
+    qreal scale = qPow(qreal(2), (m_zoomFactor) / qreal(50));
+
+    QMatrix matrix;
+    matrix.scale(scale, scale);
+    setMatrix(matrix);
+}
+
+void DropGraphicsView::zoomOut(int level)
+{
+    m_zoomFactor -= level;
+
+    qreal scale = qPow(qreal(2), (m_zoomFactor) / qreal(50));
+
+    QMatrix matrix;
+    matrix.scale(scale, scale);
+    setMatrix(matrix);
 }
 
 DropGraphicsScene::DropGraphicsScene(QWidget *parent) : QGraphicsScene(parent)
@@ -48,7 +89,9 @@ void DropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent *event)
 
         if(piece.type == "list")
         {
-
+            QGraphicsItem *item = new Chip("yellow", 50, 50);
+            item->setPos(QPointF(100, 100));
+            addItem(item);
         }
         else if(piece.type == "tree")
         {

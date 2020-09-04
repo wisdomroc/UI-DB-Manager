@@ -28,13 +28,15 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     pieceslist.cpp \
-    dropgraphicsview.cpp
+    dropgraphicsview.cpp \
+    chip.cpp
 
 HEADERS += \
         mainwindow.h \
     pieceslist.h \
     dropgraphicsview.h \
-    fwd.h
+    fwd.h \
+    chip.h
 
 FORMS += \
         mainwindow.ui

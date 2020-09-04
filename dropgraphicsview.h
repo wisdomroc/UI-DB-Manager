@@ -12,10 +12,15 @@ public:
     explicit DropGraphicsView(QWidget *parent = nullptr);
 
 protected:
+    void wheelEvent(QWheelEvent *) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
 
 private:
+    void zoomIn(int level);
+    void zoomOut(int level);
+
     DropGraphicsScene *m_scene;
+    int m_zoomFactor;
 };
 
 class DropGraphicsScene : public QGraphicsScene
