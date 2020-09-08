@@ -42,15 +42,16 @@ void MainWindow::initUI()
     ui->zoomSlider->setMinimum(0);
     ui->zoomSlider->setMaximum(500);
     ui->zoomSlider->setValue(250);
+    ui->zoomSlider->setTickInterval(5);
     ui->zoomSlider->setTickPosition(QSlider::TicksRight);
     ui->zoomInIcon->setAutoRepeat(true);
-    ui->zoomInIcon->setAutoRepeatInterval(33);
-    ui->zoomInIcon->setAutoRepeatDelay(0);
+    ui->zoomInIcon->setAutoRepeatInterval(100);
+    ui->zoomInIcon->setAutoRepeatDelay(1000);
     ui->zoomInIcon->setIcon(QPixmap(":/image/zoomin.png"));
     ui->zoomInIcon->setIconSize(iconSize);
     ui->zoomOutIcon->setAutoRepeat(true);
-    ui->zoomOutIcon->setAutoRepeatInterval(33);
-    ui->zoomOutIcon->setAutoRepeatDelay(0);
+    ui->zoomOutIcon->setAutoRepeatInterval(100);
+    ui->zoomOutIcon->setAutoRepeatDelay(1000);
     ui->zoomOutIcon->setIcon(QPixmap(":/image/zoomout.png"));
     ui->zoomOutIcon->setIconSize(iconSize);
 }
@@ -69,14 +70,8 @@ void MainWindow::initLeftControlsList()
 
 void MainWindow::initGraphicsView()
 {
-    connect(ui->graphicsView->scene(), SIGNAL(focusItemChanged(QGraphicsItem *, QGraphicsItem *, Qt::MouseFocusReason )),
-            this, SLOT(slot_focusItemChanged(QGraphicsItem *, QGraphicsItem *, Qt::MouseFocusReason )));
-
-}
-
-void MainWindow::slot_focusItemChanged(QGraphicsItem *newFocusItem, QGraphicsItem *oldFocusItem, Qt::FocusReason reason)
-{
-    qDebug() << "current Item changed ..." << endl;
+    connect(ui->graphicsView, SIGNAL(zoom(int)), this, SLOT(slot_zoom(int)));
+    connect(ui->zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(slot_setZoomFactor(int)));
 }
 
 void MainWindow::zoomIn(int level)
@@ -87,4 +82,24 @@ void MainWindow::zoomIn(int level)
 void MainWindow::zoomOut(int level)
 {
     ui->zoomSlider->setValue(ui->zoomSlider->value() - level);
+}
+
+void MainWindow::slot_zoom(int factor)
+{
+    ui->zoomSlider->setValue(250 + factor);
+}
+
+void MainWindow::slot_setZoomFactor(int factor)
+{
+    ui->graphicsView->setZoomFactor(factor - 250);
+}
+
+void MainWindow::on_zoomInIcon_clicked()
+{
+    zoomIn(5);
+}
+
+void MainWindow::on_zoomOutIcon_clicked()
+{
+    zoomOut(5);
 }

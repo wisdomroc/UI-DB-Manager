@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="PiecesList" name="listWidget_controls">
+     <widget class="ItemsList" name="listWidget_controls">
       <property name="maximumSize">
        <size>
         <width>180</width>
@@ -29,6 +29,9 @@
         <height>40</height>
        </size>
       </property>
+      <property name="movement">
+       <enum>QListView::Snap</enum>
+      </property>
       <property name="viewMode">
        <enum>QListView::IconMode</enum>
       </property>
@@ -39,6 +42,26 @@
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QToolButton" name="horizontalLay">
+        <property name="toolTip">
+         <string>水平布局</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="verticalLay">
+        <property name="toolTip">
+         <string>垂直布局</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QToolButton" name="zoomInIcon">
         <property name="text">
@@ -696,14 +719,14 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>PiecesList</class>
-   <extends>QListWidget</extends>
-   <header>pieceslist.h</header>
-  </customwidget>
-  <customwidget>
    <class>DropGraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>dropgraphicsview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ItemsList</class>
+   <extends>QListWidget</extends>
+   <header>itemslist.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

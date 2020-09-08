@@ -48,27 +48,25 @@
 **
 ****************************************************************************/
 
-#ifndef PIECESLIST_H
-#define PIECESLIST_H
+#ifndef ITEMSLIST_H
+#define ITEMSLIST_H
 
 #include <QListWidget>
 
-class PiecesList : public QListWidget
+class ItemsList : public QListWidget
 {
     Q_OBJECT
 
 public:
-    explicit PiecesList(QWidget *parent = nullptr);
+    explicit ItemsList(QWidget *parent = nullptr);
     void addPiece(const QPixmap &pixmap, const QString &type);
 
     static QString puzzleMimeType() { return QStringLiteral("image/x-puzzle-piece"); }
 
 protected:
-    void dragEnterEvent(QDragEnterEvent *event) override;
-    void dragMoveEvent(QDragMoveEvent *event) override;
     void startDrag(Qt::DropActions supportedActions) override;
 
-    int m_PieceSize;
+    int m_Itemsize;
 };
 
-#endif // PIECESLIST_H
+#endif // ITEMSLIST_H

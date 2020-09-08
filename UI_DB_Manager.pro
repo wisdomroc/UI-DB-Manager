@@ -27,16 +27,18 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    pieceslist.cpp \
     dropgraphicsview.cpp \
-    chip.cpp
+    chip.cpp \
+    itemslist.cpp \
+    frame.cpp
 
 HEADERS += \
         mainwindow.h \
-    pieceslist.h \
     dropgraphicsview.h \
     fwd.h \
-    chip.h
+    chip.h \
+    itemslist.h \
+    frame.h
 
 FORMS += \
         mainwindow.ui

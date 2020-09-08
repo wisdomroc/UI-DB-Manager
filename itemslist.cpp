@@ -48,42 +48,49 @@
 **
 ****************************************************************************/
 
-#include "pieceslist.h"
+#include "itemslist.h"
 
 #include <QDrag>
 #include <QDragEnterEvent>
 #include <QMimeData>
 
-PiecesList::PiecesList(QWidget *parent)
-    : QListWidget(parent), m_PieceSize(40)
+ItemsList::ItemsList(QWidget *parent)
+    : QListWidget(parent), m_Itemsize(40)
 {
     setDragEnabled(true);
     setViewMode(QListView::IconMode);
-    setIconSize(QSize(m_PieceSize, m_PieceSize));
+    setIconSize(QSize(m_Itemsize, m_Itemsize));
     setSpacing(10);
-    setAcceptDrops(true);
-    setDropIndicatorShown(true);
+    setAcceptDrops(false);
+    setDropIndicatorShown(false);
 }
 
-void PiecesList::dragEnterEvent(QDragEnterEvent *event)
+void ItemsList::startDrag(Qt::DropActions /*supportedActions*/)
 {
-    if (event->mimeData()->hasFormat(PiecesList::puzzleMimeType()))
-        event->accept();
-    else
-        event->ignore();
-}
+    QListWidgetItem *item = currentItem();
 
-void PiecesList::dragMoveEvent(QDragMoveEvent *event)
-{
-    if (event->mimeData()->hasFormat(PiecesList::puzzleMimeType())) {
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-    } else {
-        event->ignore();
+    QByteArray itemData;
+    QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+    QString type = item->data(Qt::UserRole).toString();
+    QPixmap pixmap = qvariant_cast<QPixmap>(item->data(Qt::UserRole+1));
+
+    dataStream << type << pixmap;
+
+    QMimeData *mimeData = new QMimeData;
+    mimeData->setData(ItemsList::puzzleMimeType(), itemData);
+
+    QDrag *drag = new QDrag(this);
+    drag->setMimeData(mimeData);
+    drag->setHotSpot(QPoint(pixmap.width()/2, pixmap.height()/2));
+    drag->setPixmap(pixmap);
+
+    if (drag->exec(Qt::MoveAction) == Qt::MoveAction)
+    {
+        //delete takeItem(row(item));
     }
 }
 
-void PiecesList::addPiece(const QPixmap &pixmap, const QString &type)
+void ItemsList::addPiece(const QPixmap &pixmap, const QString &type)
 {
     QListWidgetItem *pieceItem = new QListWidgetItem(this);
     pieceItem->setText(type);
@@ -97,30 +104,5 @@ void PiecesList::addPiece(const QPixmap &pixmap, const QString &type)
         pieceItem->setData(Qt::UserRole, type);
         pieceItem->setData(Qt::UserRole+1, QVariant(pixmap));
         pieceItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
-    }
-}
-
-void PiecesList::startDrag(Qt::DropActions /*supportedActions*/)
-{
-    QListWidgetItem *item = currentItem();
-
-    QByteArray itemData;
-    QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-    QString type = item->data(Qt::UserRole).toString();
-    QPixmap pixmap = qvariant_cast<QPixmap>(item->data(Qt::UserRole+1));
-
-    dataStream << type << pixmap;
-
-    QMimeData *mimeData = new QMimeData;
-    mimeData->setData(PiecesList::puzzleMimeType(), itemData);
-
-    QDrag *drag = new QDrag(this);
-    drag->setMimeData(mimeData);
-    drag->setHotSpot(QPoint(pixmap.width()/2, pixmap.height()/2));
-    drag->setPixmap(pixmap);
-
-    if (drag->exec(Qt::MoveAction) == Qt::MoveAction)
-    {
-        //delete takeItem(row(item));
     }
 }
