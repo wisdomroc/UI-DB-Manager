@@ -46,6 +46,9 @@ protected:
 signals:
     void pos(QPointF pointF);
 
+private slots:
+    void slot_deleteItem();
+    void slot_modifyItem();
 private:
     Frame *         m_curFrame;
     QPoint          m_shiftOrg;                         // 鼠标点选item中位置相对于item原点的偏移量
@@ -64,6 +67,8 @@ private:
     void addTable(const QPointF &point);
     void SetMouseMenu();
 
+    void DeleteItem();
+    void ModifyItem();
 };
 
 

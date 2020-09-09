@@ -120,6 +120,72 @@ void DropGraphicsScene::SetMouseMenu()
     myItemMenu->addAction(modifyAction);
 }
 
+void DropGraphicsScene::slot_deleteItem()
+{
+//    QList<QGraphicsItem *> items = selectedItems();
+//    QPointF point;
+//    int count = items.count();
+//    Frame *frame = (Frame *)items.at(count - 1);
+//    emit deleteFrame(frame);
+//    for (int i = 0; i < count; i++)
+//    {
+//        QGraphicsItem *item = items.at(i);
+//        point = item->scenePos();
+//        removeItem(item);
+//    }
+}
+
+void DropGraphicsScene::DeleteItem()
+{
+//    QList<QGraphicsItem *> items = selectedItems();
+//    QPointF point;
+//    int count = items.count();
+//    Frame *frame = (Frame *)items.at(count - 1);
+//    emit deleteFrame(frame);
+//    for (int i = 0; i < count; i++)
+//    {
+//        QGraphicsItem *item = items.at(i);
+//        point = item->scenePos();
+//        removeItem(item);
+//    }
+}
+
+void DropGraphicsScene::slot_modifyItem()
+{
+//    optionDlg = new OptionDlg();
+//    connect(optionDlg->ui.pushButton_ok, SIGNAL(clicked()), this, SLOT(slot_pushButton_ok()));
+//    double width = sceneRect().width();
+//    double height = sceneRect().height();
+//    double left = currentFrameList.at(0)->sceneBoundingRect().left()+width/2;
+//    double top = currentFrameList.at(0)->sceneBoundingRect().top()+height/2;
+//    double right = currentFrameList.at(0)->sceneBoundingRect().right()+width/2;
+//    double bottom = currentFrameList.at(0)->sceneBoundingRect().bottom()+height/2;
+//    optionDlg->ui.lineEdit_left->setText(QString::number(left));
+//    optionDlg->ui.lineEdit_top->setText(QString::number(top));
+//    optionDlg->ui.lineEdit_right->setText(QString::number(right));
+//    optionDlg->ui.lineEdit_bottom->setText(QString::number(bottom));
+
+//    optionDlg->exec();
+}
+
+void DropGraphicsScene::ModifyItem()
+{
+//    optionDlg = new OptionDlg();
+//    connect(optionDlg->ui.pushButton_ok, SIGNAL(clicked()), this, SLOT(slot_pushButton_ok()));
+//    double width = sceneRect().width();
+//    double height = sceneRect().height();
+//    double left = currentFrameList.at(0)->sceneBoundingRect().left() + width / 2;
+//    double top = currentFrameList.at(0)->sceneBoundingRect().top() + height / 2;
+//    double right = currentFrameList.at(0)->sceneBoundingRect().right() + width / 2;
+//    double bottom = currentFrameList.at(0)->sceneBoundingRect().bottom() + height / 2;
+//    optionDlg->ui.lineEdit_left->setText(QString::number(left));
+//    optionDlg->ui.lineEdit_top->setText(QString::number(top));
+//    optionDlg->ui.lineEdit_right->setText(QString::number(right));
+//    optionDlg->ui.lineEdit_bottom->setText(QString::number(bottom));
+
+//    optionDlg->exec();
+}
+
 void DropGraphicsScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
     qDebug() << "scenePos: " << event->scenePos() << ", pos: " << event->pos() << endl;
@@ -191,7 +257,7 @@ void DropGraphicsScene::addTable(const QPointF &point)
     Frame *frame = new Frame(Rect1, myItemMenu);
     frame->setRect(point.x(), point.y(), 300, 200);
     m_tableItems.append(frame);
-    QGraphicsTextItem *text = new QGraphicsTextItem(tr("表格%1").arg(m_tableItems.count()), frame);
+    QGraphicsTextItem *text = new QGraphicsTextItem(tr("%1%2").arg(QStringLiteral("表格")).arg(m_tableItems.count()), frame);
     text->setDefaultTextColor(Qt::blue);
     text->setFont(QFont("微软雅黑", 24));
     text->setPos(point);
@@ -206,7 +272,21 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         QList<QGraphicsItem *>itemList = items(event->scenePos());
         if(itemList.count() != 0)
         {
-            m_curFrame = qgraphicsitem_cast<Frame *>(itemList.first());
+            //! [0]查找根Item即Frame
+            QGraphicsItem *item;
+            QGraphicsItem *baseItem = itemList.at(itemList.count() - 1);
+            QGraphicsItem *parentItem = baseItem->parentItem();
+            if (parentItem == nullptr)
+            {
+                item = baseItem;
+            }
+            else
+            {
+                item = parentItem;
+            }
+            //! [0]
+
+            m_curFrame = qgraphicsitem_cast<Frame *>(item);
 
             //! 拖拽
             double mouseX = event->scenePos().x();
@@ -275,7 +355,20 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QList<QGraphicsItem *>itemList = items(event->scenePos(), Qt::IntersectsItemShape);
         if(itemList.count() != 0)
         {
-            m_curFrame = qgraphicsitem_cast<Frame *>(itemList.first());
+            //! [0]查找根Item即Frame
+            QGraphicsItem *item;
+            QGraphicsItem *baseItem = itemList.at(itemList.count() - 1);
+            QGraphicsItem *parentItem = baseItem->parentItem();
+            if (parentItem == nullptr)
+            {
+                item = baseItem;
+            }
+            else
+            {
+                item = parentItem;
+            }
+            //! [0]
+            m_curFrame = qgraphicsitem_cast<Frame *>(item);
 
             QRectF currentBoundingRect = m_curFrame->sceneBoundingRect();
             double mouseX = event->scenePos().x();

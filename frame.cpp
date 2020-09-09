@@ -7,6 +7,9 @@ Frame::Frame(FrameType frameType, QMenu *contextMenu)
 
 	mFrameType = frameType;
 	myContextMenu = contextMenu;
+
+    setFlags(ItemIsSelectable | ItemIsMovable);
+    setAcceptHoverEvents(true);
 }
 
 Frame::~Frame()
