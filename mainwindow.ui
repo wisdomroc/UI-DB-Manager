@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="ItemsList" name="listWidget_controls">
       <property name="maximumSize">
@@ -38,50 +38,84 @@
      </widget>
     </item>
     <item>
-     <widget class="DropGraphicsView" name="graphicsView"/>
-    </item>
-    <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QToolButton" name="horizontalLay">
-        <property name="toolTip">
-         <string>水平布局</string>
-        </property>
-        <property name="text">
-         <string>...</string>
+       <widget class="DropGraphicsView" name="graphicsView">
+        <property name="cacheMode">
+         <set>QGraphicsView::CacheBackground</set>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="verticalLay">
-        <property name="toolTip">
-         <string>垂直布局</string>
-        </property>
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="zoomInIcon">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSlider" name="zoomSlider">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="zoomOutIcon">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QToolButton" name="horizontalLay">
+          <property name="toolTip">
+           <string>水平布局</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="verticalLay">
+          <property name="toolTip">
+           <string>垂直布局</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="zoomInIcon">
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="zoomSlider">
+          <property name="minimumSize">
+           <size>
+            <width>600</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="zoomOutIcon">
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_position">
+          <property name="text">
+           <string>Position:（0, 0）</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>

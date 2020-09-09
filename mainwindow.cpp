@@ -54,6 +54,16 @@ void MainWindow::initUI()
     ui->zoomOutIcon->setAutoRepeatDelay(1000);
     ui->zoomOutIcon->setIcon(QPixmap(":/image/zoomout.png"));
     ui->zoomOutIcon->setIconSize(iconSize);
+    ui->verticalLay->setAutoRepeat(true);
+    ui->verticalLay->setAutoRepeatInterval(100);
+    ui->verticalLay->setAutoRepeatDelay(1000);
+    ui->verticalLay->setIcon(QPixmap(":/image/vertical.png"));
+    ui->verticalLay->setIconSize(iconSize);
+    ui->horizontalLay->setAutoRepeat(true);
+    ui->horizontalLay->setAutoRepeatInterval(100);
+    ui->horizontalLay->setAutoRepeatDelay(1000);
+    ui->horizontalLay->setIcon(QPixmap(":/image/horizontal.png"));
+    ui->horizontalLay->setIconSize(iconSize);
 }
 
 void MainWindow::initLeftControlsList()
@@ -72,6 +82,7 @@ void MainWindow::initGraphicsView()
 {
     connect(ui->graphicsView, SIGNAL(zoom(int)), this, SLOT(slot_zoom(int)));
     connect(ui->zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(slot_setZoomFactor(int)));
+    connect(ui->graphicsView->scene(), SIGNAL(pos(QPointF)), this, SLOT(slot_pos(QPointF)));
 }
 
 void MainWindow::zoomIn(int level)
@@ -82,6 +93,11 @@ void MainWindow::zoomIn(int level)
 void MainWindow::zoomOut(int level)
 {
     ui->zoomSlider->setValue(ui->zoomSlider->value() - level);
+}
+
+void MainWindow::slot_pos(QPointF pointF)
+{
+    ui->label_position->setText(tr("Position:（%1, %2）").arg(pointF.x()).arg(pointF.y()));
 }
 
 void MainWindow::slot_zoom(int factor)

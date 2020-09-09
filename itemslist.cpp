@@ -81,7 +81,7 @@ void ItemsList::startDrag(Qt::DropActions /*supportedActions*/)
 
     QDrag *drag = new QDrag(this);
     drag->setMimeData(mimeData);
-    drag->setHotSpot(QPoint(pixmap.width()/2, pixmap.height()/2));
+    drag->setHotSpot(QPoint(0, 0));
     drag->setPixmap(pixmap);
 
     if (drag->exec(Qt::MoveAction) == Qt::MoveAction)

@@ -43,10 +43,11 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
+signals:
+    void pos(QPointF pointF);
 
 private:
-    QGraphicsItem   *m_pItemSelected;                   // 鼠标单选item
-    QGraphicsItem   *m_pItemHovered;
+    Frame *         m_curFrame;
     QPoint          m_shiftOrg;                         // 鼠标点选item中位置相对于item原点的偏移量
     bool is_drag;
     DragType dragType;
@@ -55,13 +56,13 @@ private:
         QPixmap pixmap;
         QString type;
     };
-    QList<QGraphicsItem *> m_tableItems;
 
+    QList<Frame *> m_tableItems;
     QMenu *myItemMenu;
-    void addTable(const QPointF &point, int width, int height);
 
+
+    void addTable(const QPointF &point);
     void SetMouseMenu();
-private slots:
 
 };
 

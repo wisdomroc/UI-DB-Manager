@@ -30,6 +30,7 @@ private:
     void zoomIn(int level);
     void zoomOut(int level);
 private slots:
+    void slot_pos(QPointF pointF);
     void slot_zoom(int factor);
     void slot_setZoomFactor(int factor);
     void on_zoomInIcon_clicked();

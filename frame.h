@@ -1,4 +1,4 @@
-#ifndef FRAME_H
+﻿#ifndef FRAME_H
 #define FRAME_H
 
 #include <QtWidgets>
@@ -15,6 +15,7 @@ public:
 public:
 	FrameType mFrameType;
 	QString mName;
+    void setDragType(DragType _dragType);
 	void startDraw(QGraphicsSceneMouseEvent * event);
 	void drawing(QGraphicsSceneMouseEvent * event);
 
@@ -23,6 +24,7 @@ protected:
 
 private:
 	QMenu *myContextMenu;
+    DragType dragType;
 };
 
 #endif // FRAME_H
