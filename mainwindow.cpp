@@ -97,7 +97,7 @@ void MainWindow::zoomOut(int level)
 
 void MainWindow::slot_pos(QPointF pointF)
 {
-    ui->label_position->setText(tr("Position:（%1, %2）").arg(pointF.x()).arg(pointF.y()));
+    ui->label_position->setText(tr("Position:（%1, %2）").arg((int)pointF.x()).arg((int)pointF.y()));
 }
 
 void MainWindow::slot_zoom(int factor)

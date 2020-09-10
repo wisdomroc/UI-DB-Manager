@@ -51,9 +51,10 @@ private slots:
     void slot_modifyItem();
 private:
     Frame *         m_curFrame;
-    QPoint          m_shiftOrg;                         // 鼠标点选item中位置相对于item原点的偏移量
-    bool is_drag;
-    DragType dragType;
+    QPointF          m_shiftOrg;                         // 鼠标点选item中位置相对于item原点的偏移量
+    bool            is_drag;
+    bool            is_move;
+    DragType        dragType;
 private:
     struct Piece {
         QPixmap pixmap;

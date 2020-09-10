@@ -17,8 +17,8 @@ DropGraphicsView::DropGraphicsView(QWidget *parent) : QGraphicsView(parent), m_z
     m_scene = new DropGraphicsScene();
     setScene(m_scene);
 
-    setCacheMode(CacheBackground);
-    setDragMode(QGraphicsView::RubberBandDrag);
+    setCacheMode(CacheNone);
+    setDragMode(QGraphicsView::NoDrag);
     setMouseTracking (true);
     setAlignment(Qt::AlignLeft|Qt::AlignTop);
 }
@@ -92,7 +92,7 @@ void DropGraphicsView::zoomOut(int level)
 
 
 DropGraphicsScene::DropGraphicsScene(QWidget *parent) : QGraphicsScene(parent),
-    m_curFrame(nullptr), is_drag(false)
+    m_curFrame(nullptr), is_drag(false), is_move(false)
 {
     SetMouseMenu();
 }
@@ -122,68 +122,68 @@ void DropGraphicsScene::SetMouseMenu()
 
 void DropGraphicsScene::slot_deleteItem()
 {
-//    QList<QGraphicsItem *> items = selectedItems();
-//    QPointF point;
-//    int count = items.count();
-//    Frame *frame = (Frame *)items.at(count - 1);
-//    emit deleteFrame(frame);
-//    for (int i = 0; i < count; i++)
-//    {
-//        QGraphicsItem *item = items.at(i);
-//        point = item->scenePos();
-//        removeItem(item);
-//    }
+    //    QList<QGraphicsItem *> items = selectedItems();
+    //    QPointF point;
+    //    int count = items.count();
+    //    Frame *frame = (Frame *)items.at(count - 1);
+    //    emit deleteFrame(frame);
+    //    for (int i = 0; i < count; i++)
+    //    {
+    //        QGraphicsItem *item = items.at(i);
+    //        point = item->scenePos();
+    //        removeItem(item);
+    //    }
 }
 
 void DropGraphicsScene::DeleteItem()
 {
-//    QList<QGraphicsItem *> items = selectedItems();
-//    QPointF point;
-//    int count = items.count();
-//    Frame *frame = (Frame *)items.at(count - 1);
-//    emit deleteFrame(frame);
-//    for (int i = 0; i < count; i++)
-//    {
-//        QGraphicsItem *item = items.at(i);
-//        point = item->scenePos();
-//        removeItem(item);
-//    }
+    //    QList<QGraphicsItem *> items = selectedItems();
+    //    QPointF point;
+    //    int count = items.count();
+    //    Frame *frame = (Frame *)items.at(count - 1);
+    //    emit deleteFrame(frame);
+    //    for (int i = 0; i < count; i++)
+    //    {
+    //        QGraphicsItem *item = items.at(i);
+    //        point = item->scenePos();
+    //        removeItem(item);
+    //    }
 }
 
 void DropGraphicsScene::slot_modifyItem()
 {
-//    optionDlg = new OptionDlg();
-//    connect(optionDlg->ui.pushButton_ok, SIGNAL(clicked()), this, SLOT(slot_pushButton_ok()));
-//    double width = sceneRect().width();
-//    double height = sceneRect().height();
-//    double left = currentFrameList.at(0)->sceneBoundingRect().left()+width/2;
-//    double top = currentFrameList.at(0)->sceneBoundingRect().top()+height/2;
-//    double right = currentFrameList.at(0)->sceneBoundingRect().right()+width/2;
-//    double bottom = currentFrameList.at(0)->sceneBoundingRect().bottom()+height/2;
-//    optionDlg->ui.lineEdit_left->setText(QString::number(left));
-//    optionDlg->ui.lineEdit_top->setText(QString::number(top));
-//    optionDlg->ui.lineEdit_right->setText(QString::number(right));
-//    optionDlg->ui.lineEdit_bottom->setText(QString::number(bottom));
+    //    optionDlg = new OptionDlg();
+    //    connect(optionDlg->ui.pushButton_ok, SIGNAL(clicked()), this, SLOT(slot_pushButton_ok()));
+    //    double width = sceneRect().width();
+    //    double height = sceneRect().height();
+    //    double left = currentFrameList.at(0)->sceneBoundingRect().left()+width/2;
+    //    double top = currentFrameList.at(0)->sceneBoundingRect().top()+height/2;
+    //    double right = currentFrameList.at(0)->sceneBoundingRect().right()+width/2;
+    //    double bottom = currentFrameList.at(0)->sceneBoundingRect().bottom()+height/2;
+    //    optionDlg->ui.lineEdit_left->setText(QString::number(left));
+    //    optionDlg->ui.lineEdit_top->setText(QString::number(top));
+    //    optionDlg->ui.lineEdit_right->setText(QString::number(right));
+    //    optionDlg->ui.lineEdit_bottom->setText(QString::number(bottom));
 
-//    optionDlg->exec();
+    //    optionDlg->exec();
 }
 
 void DropGraphicsScene::ModifyItem()
 {
-//    optionDlg = new OptionDlg();
-//    connect(optionDlg->ui.pushButton_ok, SIGNAL(clicked()), this, SLOT(slot_pushButton_ok()));
-//    double width = sceneRect().width();
-//    double height = sceneRect().height();
-//    double left = currentFrameList.at(0)->sceneBoundingRect().left() + width / 2;
-//    double top = currentFrameList.at(0)->sceneBoundingRect().top() + height / 2;
-//    double right = currentFrameList.at(0)->sceneBoundingRect().right() + width / 2;
-//    double bottom = currentFrameList.at(0)->sceneBoundingRect().bottom() + height / 2;
-//    optionDlg->ui.lineEdit_left->setText(QString::number(left));
-//    optionDlg->ui.lineEdit_top->setText(QString::number(top));
-//    optionDlg->ui.lineEdit_right->setText(QString::number(right));
-//    optionDlg->ui.lineEdit_bottom->setText(QString::number(bottom));
+    //    optionDlg = new OptionDlg();
+    //    connect(optionDlg->ui.pushButton_ok, SIGNAL(clicked()), this, SLOT(slot_pushButton_ok()));
+    //    double width = sceneRect().width();
+    //    double height = sceneRect().height();
+    //    double left = currentFrameList.at(0)->sceneBoundingRect().left() + width / 2;
+    //    double top = currentFrameList.at(0)->sceneBoundingRect().top() + height / 2;
+    //    double right = currentFrameList.at(0)->sceneBoundingRect().right() + width / 2;
+    //    double bottom = currentFrameList.at(0)->sceneBoundingRect().bottom() + height / 2;
+    //    optionDlg->ui.lineEdit_left->setText(QString::number(left));
+    //    optionDlg->ui.lineEdit_top->setText(QString::number(top));
+    //    optionDlg->ui.lineEdit_right->setText(QString::number(right));
+    //    optionDlg->ui.lineEdit_bottom->setText(QString::number(bottom));
 
-//    optionDlg->exec();
+    //    optionDlg->exec();
 }
 
 void DropGraphicsScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
@@ -204,7 +204,8 @@ void DropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent *event)
 
         if(piece.type == "list")
         {
-
+            Chip *chip = new Chip(QColor("steelBlue"), 100, 100);
+            addItem(chip);
         }
         else if(piece.type == "tree")
         {
@@ -287,11 +288,15 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             //! [0]
 
             m_curFrame = qgraphicsitem_cast<Frame *>(item);
+            m_curFrame->setOpacity(0.5);
+            m_curFrame->setBrush(QColor("lightGreen"));
+            m_curFrame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
 
             //! 拖拽
             double mouseX = event->scenePos().x();
             double mouseY = event->scenePos().y();
-            QRectF rect = m_curFrame->boundingRect();
+            QRectF rect = m_curFrame->sceneBoundingRect();
+            qDebug() << "mouse press, sceneBoundingRect-->" << rect;
             double myTop = rect.top();
             double myLeft = rect.left();
             double myBottom = rect.bottom();
@@ -300,49 +305,72 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             if ((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL) && (myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL))
             {
                 is_drag = true;
+                is_move = false;
                 dragType = DragLT;
             }
             else if ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL) && (myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL))
             {
                 is_drag = true;
+                is_move = false;
                 dragType = DragRB;
             }
             else if ((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL) && (myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL))
             {
                 is_drag = true;
+                is_move = false;
                 dragType = DragLB;
             }
             else if ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL) && (myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL))
             {
                 is_drag = true;
+                is_move = false;
                 dragType = DragRT;
             }
             else if ((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL))
             {
                 is_drag = true;
+                is_move = false;
                 dragType = DragL;
             }
             else if ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL))
             {
                 is_drag = true;
+                is_move = false;
                 dragType = DragR;
             }
             else if ((myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL))
             {
                 is_drag = true;
+                is_move = false;
                 dragType = DragT;
             }
             else if ((myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL))
             {
                 is_drag = true;
+                is_move = false;
                 dragType = DragB;
             }
             else
             {
                 is_drag = false;
+                is_move = true;
+                QPointF point = m_curFrame->mapToScene(QPointF(0.0, 0.0));
+                m_shiftOrg.setX(event->scenePos().x() - point.x());
+                m_shiftOrg.setY(event->scenePos().y() - point.y());
             }
 
             m_curFrame->setDragType(dragType);
+            qDebug() <<"select item, is_drag:" << is_drag << ", is_move:" << is_move;
+        }
+        else
+        {
+            if(m_curFrame)
+            {
+                m_curFrame->setBrush(QColor("transparent"));
+                m_curFrame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+                m_curFrame->setOpacity(1);
+                qDebug() << "no item select...";
+            }
         }
     }
     QGraphicsScene::mousePressEvent(event);
@@ -350,6 +378,11 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 // 鼠标移动过程中跟随位置改变
 void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    if(is_move)
+    {
+        m_curFrame->setPos(event->scenePos().x() - m_shiftOrg.x(), event->scenePos().y() - m_shiftOrg.y());
+    }
+
     if(!is_drag)
     {
         QList<QGraphicsItem *>itemList = items(event->scenePos(), Qt::IntersectsItemShape);
@@ -370,13 +403,14 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             //! [0]
             m_curFrame = qgraphicsitem_cast<Frame *>(item);
 
-            QRectF currentBoundingRect = m_curFrame->sceneBoundingRect();
+            QRectF rect = m_curFrame->sceneBoundingRect();
             double mouseX = event->scenePos().x();
             double mouseY = event->scenePos().y();
-            double myTop = currentBoundingRect.top();
-            double myLeft = currentBoundingRect.left();
-            double myBottom = currentBoundingRect.bottom();
-            double myRight = currentBoundingRect.right();
+            //qDebug() << "mouse move, sceneBoundingRect-->" << rect;
+            double myTop = rect.top();
+            double myLeft = rect.left();
+            double myBottom = rect.bottom();
+            double myRight = rect.right();
 
             //改变鼠标形状
             if (((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL) && (myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL)) || ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL) && (myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL)))
@@ -414,6 +448,13 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 // 鼠标释放后作为最后的位置
 void DropGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    if(is_move)
+    {
+        QPointF newPos(event->scenePos().x() - m_shiftOrg.x(), event->scenePos().y() - m_shiftOrg.y());
+        m_curFrame->setPos(newPos);
+        qDebug() << "scene bounding rect-->" << m_curFrame->sceneBoundingRect() << ", pos:" << newPos << endl;
+    }
     is_drag = false;
+    is_move = false;
     QGraphicsScene::mouseReleaseEvent(event);
 }
