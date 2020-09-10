@@ -10,6 +10,6 @@
         <file>image/zoomout.png</file>
         <file>image/horizontal.png</file>
         <file>image/vertical.png</file>
-        <file>image/ui_db_manager.png</file>
+        <file>image/ui_db_manager.ico</file>
     </qresource>
 </RCC>
