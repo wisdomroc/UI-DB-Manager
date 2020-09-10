@@ -51,7 +51,8 @@ private slots:
     void slot_modifyItem();
 private:
     Frame *         m_curFrame;
-    QPointF          m_shiftOrg;                         // 鼠标点选item中位置相对于item原点的偏移量
+    QPointF         m_shiftOrg;
+    QPointF         m_startPos;
     bool            is_drag;
     bool            is_move;
     DragType        dragType;

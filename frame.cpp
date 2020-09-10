@@ -27,10 +27,9 @@ void Frame::startDraw(QGraphicsSceneMouseEvent * event)
 
 void Frame::drawing(QGraphicsSceneMouseEvent * event)
 {
-    qDebug() << "scene pos-->" << event->scenePos() << endl;
-
     QRectF r;
     QRectF re = rect();
+    qDebug() << "pre rect: " << re << endl;
     if ((this->cursor().shape() == Qt::SizeHorCursor) && (dragType == DragL))
     {
         r = QRectF(QPointF(event->scenePos().x(), re.top()), QSizeF(re.right() - event->scenePos().x(), re.bottom() - re.top()));
@@ -65,6 +64,7 @@ void Frame::drawing(QGraphicsSceneMouseEvent * event)
     }
 
     setRect(r);
+    qDebug() << "after rect: " << r << endl;
 }
 
 void Frame::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)

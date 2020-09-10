@@ -36,7 +36,7 @@ void DropGraphicsView::setZoomFactor(int factor)
 
 void DropGraphicsView::resizeEvent(QResizeEvent *event)
 {
-    setSceneRect(0, 0, width(), height());
+    setSceneRect(-width()/2, -height()/2, width()/2, height()/2);
 }
 
 void DropGraphicsView::wheelEvent(QWheelEvent *e)
@@ -256,13 +256,14 @@ void DropGraphicsScene::addTable(const QPointF &point)
 
 
     Frame *frame = new Frame(Rect1, myItemMenu);
-    frame->setRect(point.x(), point.y(), 300, 200);
+
     m_tableItems.append(frame);
     QGraphicsTextItem *text = new QGraphicsTextItem(tr("%1%2").arg(QStringLiteral("表格")).arg(m_tableItems.count()), frame);
     text->setDefaultTextColor(Qt::blue);
     text->setFont(QFont("微软雅黑", 24));
     text->setPos(point);
     addItem(frame);
+    frame->setRect(point.x(), point.y(), 300, 200);
 }
 
 // 鼠标按下获取当前单选中的QGraphicsProxyWidget图元对象
@@ -354,9 +355,11 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             {
                 is_drag = false;
                 is_move = true;
-                QPointF point = m_curFrame->mapToScene(QPointF(0.0, 0.0));
-                m_shiftOrg.setX(event->scenePos().x() - point.x());
-                m_shiftOrg.setY(event->scenePos().y() - point.y());
+//                m_startPos = m_curFrame->mapToScene(QPointF(0.0, 0.0));
+                m_startPos = m_curFrame->boundingRect().topLeft();
+                m_shiftOrg.setX(event->scenePos().x() - m_startPos.x());
+                m_shiftOrg.setY(event->scenePos().y() - m_startPos.y());
+                m_shiftOrg = event->scenePos();
             }
 
             m_curFrame->setDragType(dragType);
@@ -380,7 +383,13 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(is_move)
     {
-        m_curFrame->setPos(event->scenePos().x() - m_shiftOrg.x(), event->scenePos().y() - m_shiftOrg.y());
+        qreal x_offset = event->scenePos().x() - m_shiftOrg.x();
+        qreal y_offset = event->scenePos().y() - m_shiftOrg.y();
+        qreal width = m_curFrame->rect().width();
+        qreal height = m_curFrame->rect().height();
+        qDebug() << x_offset << "," << y_offset << "," << width << "," << height << "," << m_startPos << endl;
+        //m_curFrame->setPos(x_offset, y_offset);
+        m_curFrame->setRect(m_startPos.x() + x_offset, m_startPos.y() + y_offset, width, height);
     }
 
     if(!is_drag)
@@ -450,9 +459,10 @@ void DropGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if(is_move)
     {
-        QPointF newPos(event->scenePos().x() - m_shiftOrg.x(), event->scenePos().y() - m_shiftOrg.y());
-        m_curFrame->setPos(newPos);
-        qDebug() << "scene bounding rect-->" << m_curFrame->sceneBoundingRect() << ", pos:" << newPos << endl;
+//        QPointF newPos(event->scenePos().x() - m_shiftOrg.x(), event->scenePos().y() - m_shiftOrg.y());
+//        m_curFrame->setPos(newPos);
+//        QRectF re = m_curFrame->rect();
+//        qDebug() << "scene bounding rect-->" << m_curFrame->sceneBoundingRect() << ", pos:" << newPos << ", curFrame.rect:" << re << endl;
     }
     is_drag = false;
     is_move = false;
