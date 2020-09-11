@@ -378,6 +378,7 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
     QGraphicsScene::mousePressEvent(event);
 }
+
 // 鼠标移动过程中跟随位置改变
 void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -388,8 +389,9 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         qreal width = m_curFrame->rect().width();
         qreal height = m_curFrame->rect().height();
         qDebug() << x_offset << "," << y_offset << "," << width << "," << height << "," << m_startPos << endl;
-        //m_curFrame->setPos(x_offset, y_offset);
+
         m_curFrame->setRect(m_startPos.x() + x_offset, m_startPos.y() + y_offset, width, height);
+        m_curFrame->resetChildrenPos();
     }
 
     if(!is_drag)

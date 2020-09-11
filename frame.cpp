@@ -25,6 +25,16 @@ void Frame::startDraw(QGraphicsSceneMouseEvent * event)
     setRect(QRectF(event->scenePos(), QSizeF(0, 0)));
 }
 
+void Frame::resetChildrenPos()
+{
+    QList<QGraphicsItem *> children = this->childItems();
+    foreach(QGraphicsItem *item, children)
+    {
+        QPointF standardPoint = this->rect().topLeft();
+        item->setPos(standardPoint.x(), standardPoint.y());
+    }
+}
+
 void Frame::drawing(QGraphicsSceneMouseEvent * event)
 {
     QRectF r;
@@ -64,6 +74,7 @@ void Frame::drawing(QGraphicsSceneMouseEvent * event)
     }
 
     setRect(r);
+    resetChildrenPos();
     qDebug() << "after rect: " << r << endl;
 }
 

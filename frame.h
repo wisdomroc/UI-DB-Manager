@@ -18,6 +18,7 @@ public:
     void setDragType(DragType _dragType);
 	void startDraw(QGraphicsSceneMouseEvent * event);
 	void drawing(QGraphicsSceneMouseEvent * event);
+    void resetChildrenPos();
 
 protected:
 	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) Q_DECL_OVERRIDE;
