@@ -119,3 +119,18 @@ void MainWindow::on_zoomOutIcon_clicked()
 {
     zoomOut(5);
 }
+
+void MainWindow::on_horizontalLay_clicked()
+{
+    DropGraphicsScene *graphicsScene = (DropGraphicsScene *)(ui->graphicsView->scene());
+    QList<Frame *> selectedItems = graphicsScene->getSelectedItems();
+    Frame *frame = new Frame(Rect1, new QMenu());
+    qDebug() << "selected item count: " << selectedItems.count();
+    for(int i = 0; i < selectedItems.count(); i ++)
+    {
+        selectedItems.at(i)->setParentItem(frame);
+
+    }
+
+    ui->graphicsView->scene()->addItem(frame);
+}

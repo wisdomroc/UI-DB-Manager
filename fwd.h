@@ -7,5 +7,6 @@
 #include <QGraphicsItem>
 #include <QDropEvent>
 #include <QGraphicsSceneMouseEvent>
+#include "dropgraphicsview.h"
 
 #endif // FWD_H

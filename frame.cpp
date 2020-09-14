@@ -6,7 +6,7 @@ Frame::Frame(FrameType frameType, QMenu *contextMenu)
     mFrameType = frameType;
     myContextMenu = contextMenu;
     setAcceptHoverEvents(true);
-
+//	setFlags(QGraphicsItem::ItemIsSelectable);
     setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
 }
 

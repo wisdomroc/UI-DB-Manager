@@ -35,6 +35,7 @@ private slots:
     void slot_setZoomFactor(int factor);
     void on_zoomInIcon_clicked();
     void on_zoomOutIcon_clicked();
+    void on_horizontalLay_clicked();
 };
 
 #endif // MAINWINDOW_H

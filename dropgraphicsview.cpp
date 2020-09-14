@@ -97,6 +97,11 @@ DropGraphicsScene::DropGraphicsScene(QWidget *parent) : QGraphicsScene(parent),
     SetMouseMenu();
 }
 
+QList<Frame *> DropGraphicsScene::getSelectedItems()
+{
+    return m_selectedItems;
+}
+
 void DropGraphicsScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (event->mimeData()->hasFormat("image/x-puzzle-piece"))
@@ -137,53 +142,17 @@ void DropGraphicsScene::slot_deleteItem()
 
 void DropGraphicsScene::DeleteItem()
 {
-    //    QList<QGraphicsItem *> items = selectedItems();
-    //    QPointF point;
-    //    int count = items.count();
-    //    Frame *frame = (Frame *)items.at(count - 1);
-    //    emit deleteFrame(frame);
-    //    for (int i = 0; i < count; i++)
-    //    {
-    //        QGraphicsItem *item = items.at(i);
-    //        point = item->scenePos();
-    //        removeItem(item);
-    //    }
+
 }
 
 void DropGraphicsScene::slot_modifyItem()
 {
-    //    optionDlg = new OptionDlg();
-    //    connect(optionDlg->ui.pushButton_ok, SIGNAL(clicked()), this, SLOT(slot_pushButton_ok()));
-    //    double width = sceneRect().width();
-    //    double height = sceneRect().height();
-    //    double left = currentFrameList.at(0)->sceneBoundingRect().left()+width/2;
-    //    double top = currentFrameList.at(0)->sceneBoundingRect().top()+height/2;
-    //    double right = currentFrameList.at(0)->sceneBoundingRect().right()+width/2;
-    //    double bottom = currentFrameList.at(0)->sceneBoundingRect().bottom()+height/2;
-    //    optionDlg->ui.lineEdit_left->setText(QString::number(left));
-    //    optionDlg->ui.lineEdit_top->setText(QString::number(top));
-    //    optionDlg->ui.lineEdit_right->setText(QString::number(right));
-    //    optionDlg->ui.lineEdit_bottom->setText(QString::number(bottom));
 
-    //    optionDlg->exec();
 }
 
 void DropGraphicsScene::ModifyItem()
 {
-    //    optionDlg = new OptionDlg();
-    //    connect(optionDlg->ui.pushButton_ok, SIGNAL(clicked()), this, SLOT(slot_pushButton_ok()));
-    //    double width = sceneRect().width();
-    //    double height = sceneRect().height();
-    //    double left = currentFrameList.at(0)->sceneBoundingRect().left() + width / 2;
-    //    double top = currentFrameList.at(0)->sceneBoundingRect().top() + height / 2;
-    //    double right = currentFrameList.at(0)->sceneBoundingRect().right() + width / 2;
-    //    double bottom = currentFrameList.at(0)->sceneBoundingRect().bottom() + height / 2;
-    //    optionDlg->ui.lineEdit_left->setText(QString::number(left));
-    //    optionDlg->ui.lineEdit_top->setText(QString::number(top));
-    //    optionDlg->ui.lineEdit_right->setText(QString::number(right));
-    //    optionDlg->ui.lineEdit_bottom->setText(QString::number(bottom));
 
-    //    optionDlg->exec();
 }
 
 void DropGraphicsScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
@@ -266,6 +235,33 @@ void DropGraphicsScene::addTable(const QPointF &point)
     frame->setRect(point.x(), point.y(), 300, 200);
 }
 
+void DropGraphicsScene::setCurrentItemSelected(QGraphicsItem *item)
+{
+    m_curFrame = qgraphicsitem_cast<Frame *>(item);
+    m_curFrame->setOpacity(0.5);
+    m_curFrame->setBrush(QColor("lightGreen"));
+    m_curFrame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+}
+
+void DropGraphicsScene::addToItemSelected()
+{
+    if(!m_selectedItems.contains(m_curFrame))
+    {
+        m_selectedItems.append(m_curFrame);
+    }
+}
+
+void DropGraphicsScene::clearAllItemSelected()
+{
+    for(int i = 0; i < m_selectedItems.count(); i ++)
+    {
+        Frame *frame = m_selectedItems.at(i);
+        frame->setBrush(QColor("transparent"));
+        frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+        frame->setOpacity(1);
+    }
+}
+
 // 鼠标按下获取当前单选中的QGraphicsProxyWidget图元对象
 void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -288,16 +284,26 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
             //! [0]
 
-            m_curFrame = qgraphicsitem_cast<Frame *>(item);
-            m_curFrame->setOpacity(0.5);
-            m_curFrame->setBrush(QColor("lightGreen"));
-            m_curFrame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+            //! 按住Ctrl键
+            if ( QApplication::keyboardModifiers () == Qt::ControlModifier)
+            {
+
+            }
+            else
+            {
+                clearAllItemSelected();
+            }
+
+            //! 设置当前Item选中,并设为m_curFrame
+            setCurrentItemSelected(item);
+
+            //! 添加到选中itemList中
+            addToItemSelected();
 
             //! 拖拽
             double mouseX = event->scenePos().x();
             double mouseY = event->scenePos().y();
             QRectF rect = m_curFrame->sceneBoundingRect();
-            qDebug() << "mouse press, sceneBoundingRect-->" << rect;
             double myTop = rect.top();
             double myLeft = rect.left();
             double myBottom = rect.bottom();
@@ -355,7 +361,6 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             {
                 is_drag = false;
                 is_move = true;
-//                m_startPos = m_curFrame->mapToScene(QPointF(0.0, 0.0));
                 m_startPos = m_curFrame->boundingRect().topLeft();
                 m_shiftOrg.setX(event->scenePos().x() - m_startPos.x());
                 m_shiftOrg.setY(event->scenePos().y() - m_startPos.y());
@@ -363,17 +368,10 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
 
             m_curFrame->setDragType(dragType);
-            qDebug() <<"select item, is_drag:" << is_drag << ", is_move:" << is_move;
         }
         else
         {
-            if(m_curFrame)
-            {
-                m_curFrame->setBrush(QColor("transparent"));
-                m_curFrame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
-                m_curFrame->setOpacity(1);
-                qDebug() << "no item select...";
-            }
+            clearAllItemSelected();
         }
     }
     QGraphicsScene::mousePressEvent(event);
@@ -412,9 +410,9 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 item = parentItem;
             }
             //! [0]
-            m_curFrame = qgraphicsitem_cast<Frame *>(item);
+            QGraphicsItem *tmpItem = qgraphicsitem_cast<Frame *>(item);
 
-            QRectF rect = m_curFrame->sceneBoundingRect();
+            QRectF rect = tmpItem->sceneBoundingRect();
             double mouseX = event->scenePos().x();
             double mouseY = event->scenePos().y();
             //qDebug() << "mouse move, sceneBoundingRect-->" << rect;
@@ -426,23 +424,23 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             //改变鼠标形状
             if (((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL) && (myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL)) || ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL) && (myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL)))
             {
-                m_curFrame->setCursor(Qt::SizeFDiagCursor);
+                tmpItem->setCursor(Qt::SizeFDiagCursor);
             }
             else if (((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL) && (myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL)) || ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL) && (myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL)))
             {
-                m_curFrame->setCursor(Qt::SizeBDiagCursor);
+                tmpItem->setCursor(Qt::SizeBDiagCursor);
             }
             else if (((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL)) || ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL)))
             {
-                m_curFrame->setCursor(Qt::SizeHorCursor);
+                tmpItem->setCursor(Qt::SizeHorCursor);
             }
             else if (((myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL)) || ((myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL)))
             {
-                m_curFrame->setCursor(Qt::SizeVerCursor);
+                tmpItem->setCursor(Qt::SizeVerCursor);
             }
             else
             {
-                m_curFrame->setCursor(Qt::ArrowCursor);
+                tmpItem->setCursor(Qt::ArrowCursor);
             }
         }
     }
@@ -461,10 +459,7 @@ void DropGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if(is_move)
     {
-//        QPointF newPos(event->scenePos().x() - m_shiftOrg.x(), event->scenePos().y() - m_shiftOrg.y());
-//        m_curFrame->setPos(newPos);
-//        QRectF re = m_curFrame->rect();
-//        qDebug() << "scene bounding rect-->" << m_curFrame->sceneBoundingRect() << ", pos:" << newPos << ", curFrame.rect:" << re << endl;
+
     }
     is_drag = false;
     is_move = false;

@@ -35,6 +35,9 @@ class DropGraphicsScene : public QGraphicsScene
 public:
     explicit DropGraphicsScene(QWidget *parent = nullptr);
 
+public:
+    QList<Frame *> getSelectedItems();
+
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override;
@@ -63,6 +66,7 @@ private:
     };
 
     QList<Frame *> m_tableItems;
+    QList<Frame *> m_selectedItems;
     QMenu *myItemMenu;
 
 
@@ -71,6 +75,9 @@ private:
 
     void DeleteItem();
     void ModifyItem();
+    void clearAllItemSelected();
+    void setCurrentItemSelected(QGraphicsItem *item);
+    void addToItemSelected();
 };
 
 
