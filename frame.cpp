@@ -1,7 +1,8 @@
 ﻿#include "frame.h"
 #include <QPen>
 
-Frame::Frame(FrameType frameType, QMenu *contextMenu)
+Frame::Frame(FrameType frameType, QMenu *contextMenu):parentFrame(nullptr),
+            x_offset(0), y_offset(0)
 {
     mFrameType = frameType;
     myContextMenu = contextMenu;
@@ -13,6 +14,17 @@ Frame::Frame(FrameType frameType, QMenu *contextMenu)
 Frame::~Frame()
 {
 
+}
+
+void Frame::setParentItemS(Frame *frame)
+{
+    parentFrame = frame;
+}
+
+void Frame::setOffset(qreal x_, qreal y_)
+{
+    x_offset = x_;
+    y_offset = y_;
 }
 
 void Frame::setDragType(DragType _dragType)
@@ -28,10 +40,20 @@ void Frame::startDraw(QGraphicsSceneMouseEvent * event)
 void Frame::resetChildrenPos()
 {
     QList<QGraphicsItem *> children = this->childItems();
+    QPointF topLeft = this->sceneBoundingRect().topLeft();
     foreach(QGraphicsItem *item, children)
     {
-        QPointF standardPoint = this->rect().topLeft();
-        item->setPos(standardPoint.x(), standardPoint.y());
+        Frame *frame = qgraphicsitem_cast<Frame *>(item);
+        if(frame != nullptr)
+        {
+            QPointF offsetPoint = QPointF(frame->x_offset, frame->y_offset);
+            qDebug() << "offsetPoint: " << offsetPoint << endl;
+			frame->setRect(topLeft.x() + offsetPoint.x(), topLeft.y() + offsetPoint.y(), frame->rect().width(), frame->rect().height());
+			//! Frame的标题child也随之移动
+			QGraphicsItem *childItem = frame->childItems().first();
+			QPointF standardPoint = frame->sceneBoundingRect().topLeft();
+			childItem->setPos(standardPoint.x(), standardPoint.y());
+		}
     }
 }
 

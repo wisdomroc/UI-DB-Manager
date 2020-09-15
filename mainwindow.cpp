@@ -124,13 +124,24 @@ void MainWindow::on_horizontalLay_clicked()
 {
     DropGraphicsScene *graphicsScene = (DropGraphicsScene *)(ui->graphicsView->scene());
     QList<Frame *> selectedItems = graphicsScene->getSelectedItems();
-    Frame *frame = new Frame(Rect1, new QMenu());
+    Frame *frame_new = new Frame(Horizontal, new QMenu());
     qDebug() << "selected item count: " << selectedItems.count();
+    QPointF topLeft = QPointF(10000,10000);
+    QPointF bottomRight = QPointF(0, 0);
     for(int i = 0; i < selectedItems.count(); i ++)
     {
-        selectedItems.at(i)->setParentItem(frame);
-
+        Frame *frame = selectedItems.at(i);
+        QRectF rect = frame->sceneBoundingRect();
+        if(rect.x() < topLeft.x())
+            topLeft.rx() = rect.x();
+        if(rect.y() < topLeft.y())
+            topLeft.ry() = rect.y();
+        if(rect.x() + rect.width() > bottomRight.x())
+            bottomRight.rx() = rect.x() + rect.width();
+        if(rect.y() + rect.height() > bottomRight.y())
+            bottomRight.ry() = rect.y() + rect.height();
+        frame->setParentItem(frame_new);
     }
-
-    ui->graphicsView->scene()->addItem(frame);
+    frame_new->setRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y());
+    ui->graphicsView->scene()->addItem(frame_new);
 }

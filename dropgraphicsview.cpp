@@ -36,7 +36,7 @@ void DropGraphicsView::setZoomFactor(int factor)
 
 void DropGraphicsView::resizeEvent(QResizeEvent *event)
 {
-    setSceneRect(-width()/2, -height()/2, width()/2, height()/2);
+    setSceneRect(0, 0, width(), height());
 }
 
 void DropGraphicsView::wheelEvent(QWheelEvent *e)
@@ -260,6 +260,7 @@ void DropGraphicsScene::clearAllItemSelected()
         frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
         frame->setOpacity(1);
     }
+    m_selectedItems.clear();
 }
 
 // 鼠标按下获取当前单选中的QGraphicsProxyWidget图元对象
@@ -271,6 +272,7 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         if(itemList.count() != 0)
         {
             //! [0]查找根Item即Frame
+			qDebug() << "item count: " << itemList.count();
             QGraphicsItem *item;
             QGraphicsItem *baseItem = itemList.at(itemList.count() - 1);
             QGraphicsItem *parentItem = baseItem->parentItem();
@@ -368,6 +370,22 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             }
 
             m_curFrame->setDragType(dragType);
+
+            //! 设置children为Frame的一些信息
+            QList<QGraphicsItem *> children = m_curFrame->childItems();
+            foreach(QGraphicsItem *item, children)
+            {
+                Frame *frame = qgraphicsitem_cast<Frame *>(item);
+                if(frame == nullptr)
+                    return;
+                QPointF offsetPoint = frame->sceneBoundingRect().topLeft() - m_curFrame->sceneBoundingRect().topLeft() + QPointF(-1, -1); //! 这里加1进行修正
+                qDebug() << "offsetPoint-->" << offsetPoint << endl;
+                if(frame != nullptr)
+                {
+                    frame->setParentItemS(m_curFrame);
+                    frame->setOffset(offsetPoint.x(), offsetPoint.y());
+                }
+            }
         }
         else
         {
