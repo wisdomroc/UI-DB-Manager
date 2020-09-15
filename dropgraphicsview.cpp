@@ -208,24 +208,7 @@ void DropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent *event)
 
 void DropGraphicsScene::addTable(const QPointF &point)
 {
-    /*
-    QPen pen;
-    pen.setStyle(Qt::DashDotLine);
-    pen.setWidth(3);
-    pen.setBrush(Qt::green);
-    pen.setCapStyle(Qt::RoundCap);
-    pen.setJoinStyle(Qt::RoundJoin);
-    QRadialGradient gradient(50, 50, 50, 50, 50);
-    gradient.setColorAt(0, QColor::fromRgbF(0, 1, 0, 1));
-    gradient.setColorAt(1, QColor::fromRgbF(0, 0, 0, 0));
-    QBrush brush(gradient);
-    QGraphicsRectItem *item = addRect(point.x(), point.y(), width, height, pen, brush);
-    item->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-    */
-
-
     Frame *frame = new Frame(Rect1, myItemMenu);
-
     m_tableItems.append(frame);
     QGraphicsTextItem *text = new QGraphicsTextItem(tr("%1%2").arg(QStringLiteral("表格")).arg(m_tableItems.count()), frame);
     text->setDefaultTextColor(Qt::blue);
@@ -240,7 +223,7 @@ void DropGraphicsScene::setCurrentItemSelected(QGraphicsItem *item)
     m_curFrame = qgraphicsitem_cast<Frame *>(item);
     m_curFrame->setOpacity(0.5);
     m_curFrame->setBrush(QColor("lightGreen"));
-    m_curFrame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+    m_curFrame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 }
 
 void DropGraphicsScene::addToItemSelected()
@@ -257,7 +240,7 @@ void DropGraphicsScene::clearAllItemSelected()
     {
         Frame *frame = m_selectedItems.at(i);
         frame->setBrush(QColor("transparent"));
-        frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+        frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         frame->setOpacity(1);
     }
     m_selectedItems.clear();
@@ -378,7 +361,7 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 Frame *frame = qgraphicsitem_cast<Frame *>(item);
                 if(frame == nullptr)
                     return;
-                QPointF offsetPoint = frame->sceneBoundingRect().topLeft() - m_curFrame->sceneBoundingRect().topLeft() + QPointF(-1, -1); //! 这里加1进行修正
+                QPointF offsetPoint = frame->sceneBoundingRect().topLeft() - m_curFrame->sceneBoundingRect().topLeft() - QPointF(-0.5, -0.5); //! TODO.这里加1进行修正
                 qDebug() << "offsetPoint-->" << offsetPoint << endl;
                 if(frame != nullptr)
                 {

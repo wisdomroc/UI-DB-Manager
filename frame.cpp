@@ -7,8 +7,18 @@ Frame::Frame(FrameType frameType, QMenu *contextMenu):parentFrame(nullptr),
     mFrameType = frameType;
     myContextMenu = contextMenu;
     setAcceptHoverEvents(true);
-//	setFlags(QGraphicsItem::ItemIsSelectable);
-    setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+    switch (frameType) {
+    case Rect1:
+    case Rect2:
+    case Rect3:
+        setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        break;
+    case Horizontal:
+    case Vertical:
+        setPen(QPen(QBrush(Qt::red, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        break;
+    }
+
 }
 
 Frame::~Frame()
@@ -54,6 +64,11 @@ void Frame::resetChildrenPos()
 			QPointF standardPoint = frame->sceneBoundingRect().topLeft();
 			childItem->setPos(standardPoint.x(), standardPoint.y());
 		}
+        else
+        {
+            QPointF standardPoint = topLeft;
+            item->setPos(standardPoint.x(), standardPoint.y());
+        }
     }
 }
 
