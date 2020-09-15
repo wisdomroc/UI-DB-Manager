@@ -26,6 +26,11 @@ Frame::~Frame()
 
 }
 
+FrameType Frame::getType() const
+{
+    return mFrameType;
+}
+
 void Frame::setParentItemS(Frame *frame)
 {
     parentFrame = frame;
@@ -51,14 +56,27 @@ void Frame::resetChildrenPos()
 {
     QList<QGraphicsItem *> children = this->childItems();
     QPointF topLeft = this->sceneBoundingRect().topLeft();
+    QPointF bottomRight = this->sceneBoundingRect().bottomRight();
     foreach(QGraphicsItem *item, children)
     {
         Frame *frame = qgraphicsitem_cast<Frame *>(item);
         if(frame != nullptr)
         {
             QPointF offsetPoint = QPointF(frame->x_offset, frame->y_offset);
+            qreal new_width = frame->rect().width();
+            qreal new_height = frame->rect().height();
+            qreal width_standard = bottomRight.x() - frame->sceneBoundingRect().x();
+            qreal height_standard = bottomRight.y() - frame->sceneBoundingRect().y();
+//            if(new_height > height_standard)
+//            {
+//                new_height = height_standard;
+//            }
+//            if(new_width > width_standard)
+//            {
+//                new_width = width_standard;
+//            }
             qDebug() << "offsetPoint: " << offsetPoint << endl;
-			frame->setRect(topLeft.x() + offsetPoint.x(), topLeft.y() + offsetPoint.y(), frame->rect().width(), frame->rect().height());
+            frame->setRect(topLeft.x() + offsetPoint.x(), topLeft.y() + offsetPoint.y(), new_width, new_height);
 			//! Frame的标题child也随之移动
 			QGraphicsItem *childItem = frame->childItems().first();
 			QPointF standardPoint = frame->sceneBoundingRect().topLeft();

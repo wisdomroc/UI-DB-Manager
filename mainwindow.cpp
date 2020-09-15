@@ -189,6 +189,11 @@ void MainWindow::on_verticalLay_clicked()
         QRectF splitRect(topLeft.x(), topLeft.y() + splitHeight*i, width, splitHeight);
         Frame *frame = selectedItems.at(i);
         frame->setRect(splitRect);
+        FrameType frameType = frame->getType();
+        if(frameType == Vertical || frameType == Horizontal)
+        {
+            //frame->resetChildrenPos();
+        }
     }
     frame_new->setRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y());
     ui->graphicsView->scene()->addItem(frame_new);

@@ -15,6 +15,7 @@ public:
 public:
 	FrameType mFrameType;
 	QString mName;
+    FrameType getType() const;
     void setDragType(DragType _dragType);
 	void startDraw(QGraphicsSceneMouseEvent * event);
 	void drawing(QGraphicsSceneMouseEvent * event);

@@ -412,7 +412,8 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             }
             //! [0]
             QGraphicsItem *tmpItem = qgraphicsitem_cast<Frame *>(item);
-
+            if(tmpItem == nullptr)
+                return;
             QRectF rect = tmpItem->sceneBoundingRect();
             double mouseX = event->scenePos().x();
             double mouseY = event->scenePos().y();
