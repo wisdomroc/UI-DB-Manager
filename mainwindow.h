@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "fwd.h"
+#include "frame.h"
 #include <QMainWindow>
 
 namespace Ui {
@@ -20,23 +21,28 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private:
-    Ui::MainWindow *ui;
 
+private:
     void initUI();
     void initLeftControlsList();
     void initGraphicsView();
 
     void zoomIn(int level);
     void zoomOut(int level);
+
 private slots:
     void slot_pos(QPointF pointF);
+    void slot_itemAdded(Frame *_frame);
     void slot_zoom(int factor);
     void slot_setZoomFactor(int factor);
     void on_zoomInIcon_clicked();
     void on_zoomOutIcon_clicked();
     void on_horizontalLay_clicked();
     void on_verticalLay_clicked();
+
+private:
+    Ui::MainWindow *ui;
+    Frame *m_rootFrame;
 };
 
 #endif // MAINWINDOW_H

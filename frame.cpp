@@ -1,16 +1,16 @@
 ﻿#include "frame.h"
 #include <QPen>
 
-Frame::Frame(FrameType frameType, QMenu *contextMenu):parentFrame(nullptr),
-            x_offset(0), y_offset(0)
+Frame::Frame(FrameType frameType, QMenu *contextMenu):m_parentFrame(nullptr),
+            m_offsetX(0), m_offsetY(0), m_offsetFlag(false)
 {
-    mFrameType = frameType;
-    myContextMenu = contextMenu;
+    m_frameType = frameType;
+    m_contextMenu = contextMenu;
     setAcceptHoverEvents(true);
     switch (frameType) {
-    case Rect1:
-    case Rect2:
-    case Rect3:
+    case Table:
+    case List:
+    case Tree:
         setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         break;
     case Horizontal:
@@ -28,28 +28,34 @@ Frame::~Frame()
 
 FrameType Frame::getType() const
 {
-    return mFrameType;
+    return m_frameType;
 }
 
-void Frame::setParentItemS(Frame *frame)
+void Frame::setParentItemS(Frame *_frame)
 {
-    parentFrame = frame;
+    m_parentFrame = _frame;
+    m_parentFrame->addChildItem(_frame);
+}
+
+void Frame::setOriginalWidthAndHeight(int _width, int _height)
+{
+    m_width = _width;
+    m_height = _height;
 }
 
 void Frame::setOffset(qreal x_, qreal y_)
 {
-    x_offset = x_;
-    y_offset = y_;
+    if (!m_offsetFlag)
+	{
+        m_offsetX = x_;
+        m_offsetY = y_;
+        m_offsetFlag = true;
+	}
 }
 
 void Frame::setDragType(DragType _dragType)
 {
-    dragType = _dragType;
-}
-
-void Frame::startDraw(QGraphicsSceneMouseEvent * event)
-{
-    setRect(QRectF(event->scenePos(), QSizeF(0, 0)));
+    m_dragType = _dragType;
 }
 
 void Frame::resetChildrenPos()
@@ -57,33 +63,34 @@ void Frame::resetChildrenPos()
     QList<QGraphicsItem *> children = this->childItems();
     QPointF topLeft = this->sceneBoundingRect().topLeft();
     QPointF bottomRight = this->sceneBoundingRect().bottomRight();
+    FrameType frameType = this->getType();
     foreach(QGraphicsItem *item, children)
     {
         Frame *frame = qgraphicsitem_cast<Frame *>(item);
         if(frame != nullptr)
-        {
-            QPointF offsetPoint = QPointF(frame->x_offset, frame->y_offset);
-            qreal new_width = frame->rect().width();
-            qreal new_height = frame->rect().height();
+        {	//! child是Frame的情况
+            QPointF offsetPoint = QPointF(frame->m_offsetX, frame->m_offsetY);
+            qreal new_width = frame->m_width;
+            qreal new_height = frame->m_height;
             qreal width_standard = bottomRight.x() - frame->sceneBoundingRect().x();
             qreal height_standard = bottomRight.y() - frame->sceneBoundingRect().y();
-//            if(new_height > height_standard)
-//            {
-//                new_height = height_standard;
-//            }
-//            if(new_width > width_standard)
-//            {
-//                new_width = width_standard;
-//            }
+            if(new_height > height_standard)
+            {
+                new_height = height_standard;
+            }
+            if(new_width > width_standard)
+            {
+                new_width = width_standard;
+            }
             qDebug() << "offsetPoint: " << offsetPoint << endl;
             frame->setRect(topLeft.x() + offsetPoint.x(), topLeft.y() + offsetPoint.y(), new_width, new_height);
-			//! Frame的标题child也随之移动
-			QGraphicsItem *childItem = frame->childItems().first();
-			QPointF standardPoint = frame->sceneBoundingRect().topLeft();
-			childItem->setPos(standardPoint.x(), standardPoint.y());
+
+			//! 递归查找子Item，并同样设置位置信息
+			frame->resetChildrenPos();
+
 		}
         else
-        {
+        {	//! child是Frame的情况
             QPointF standardPoint = topLeft;
             item->setPos(standardPoint.x(), standardPoint.y());
         }
@@ -95,35 +102,35 @@ void Frame::drawing(QGraphicsSceneMouseEvent * event)
     QRectF r;
     QRectF re = rect();
     qDebug() << "pre rect: " << re << endl;
-    if ((this->cursor().shape() == Qt::SizeHorCursor) && (dragType == DragL))
+    if ((this->cursor().shape() == Qt::SizeHorCursor) && (m_dragType == DragL))
     {
         r = QRectF(QPointF(event->scenePos().x(), re.top()), QSizeF(re.right() - event->scenePos().x(), re.bottom() - re.top()));
     }
-    else if ((this->cursor().shape() == Qt::SizeHorCursor) && (dragType == DragR))
+    else if ((this->cursor().shape() == Qt::SizeHorCursor) && (m_dragType == DragR))
     {
         r = QRectF(re.topLeft(), QSizeF(event->scenePos().x() - re.left(), re.bottom() - re.top()));
     }
-    else if ((this->cursor().shape() == Qt::SizeVerCursor) && (dragType == DragT))
+    else if ((this->cursor().shape() == Qt::SizeVerCursor) && (m_dragType == DragT))
     {
         r = QRectF(QPointF(re.left(), event->scenePos().y()), QSizeF(re.right() - re.left(), re.bottom() - event->scenePos().y()));
     }
-    else if ((this->cursor().shape() == Qt::SizeVerCursor) && (dragType == DragB))
+    else if ((this->cursor().shape() == Qt::SizeVerCursor) && (m_dragType == DragB))
     {
         r = QRectF(re.topLeft(), QSizeF(re.right() - re.left(), event->scenePos().y() - re.top()));
     }
-    else if ((this->cursor().shape() == Qt::SizeFDiagCursor) && (dragType == DragLT))
+    else if ((this->cursor().shape() == Qt::SizeFDiagCursor) && (m_dragType == DragLT))
     {
         r = QRectF(QPointF(event->scenePos().x(), event->scenePos().y()), QSizeF(re.right() - event->scenePos().x(), re.bottom() - event->scenePos().y()));
     }
-    else if ((this->cursor().shape() == Qt::SizeFDiagCursor) && (dragType == DragRB))
+    else if ((this->cursor().shape() == Qt::SizeFDiagCursor) && (m_dragType == DragRB))
     {
         r = QRectF(re.topLeft(), QSizeF(event->scenePos().x() - re.left(), event->scenePos().y() - re.top()));
     }
-    else if ((this->cursor().shape() == Qt::SizeBDiagCursor) && (dragType == DragLB))
+    else if ((this->cursor().shape() == Qt::SizeBDiagCursor) && (m_dragType == DragLB))
     {
         r = QRectF(QPointF(event->scenePos().x(), re.top()), QSizeF(re.right() - event->scenePos().x(), event->scenePos().y() - re.top()));
     }
-    else if ((this->cursor().shape() == Qt::SizeBDiagCursor) && (dragType == DragRT))
+    else if ((this->cursor().shape() == Qt::SizeBDiagCursor) && (m_dragType == DragRT))
     {
         r = QRectF(QPointF(re.left(), event->scenePos().y()), QSizeF(event->scenePos().x() - re.left(), re.bottom() - event->scenePos().y()));
     }
@@ -133,9 +140,15 @@ void Frame::drawing(QGraphicsSceneMouseEvent * event)
     qDebug() << "after rect: " << r << endl;
 }
 
+void Frame::addChildItem(Frame *_frame)
+{
+    if(!m_childrenFrame.contains(_frame))
+        m_childrenFrame.append(_frame);
+}
+
 void Frame::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     scene()->clearSelection();
     setSelected(true);
-    myContextMenu->exec(event->screenPos());
+    m_contextMenu->exec(event->screenPos());
 }

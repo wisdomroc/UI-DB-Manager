@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initGraphicsView();
     initUI();
 
+    m_rootFrame = new Frame(Null, new QMenu());
 }
 
 MainWindow::~MainWindow()
@@ -83,6 +84,7 @@ void MainWindow::initGraphicsView()
     connect(ui->graphicsView, SIGNAL(zoom(int)), this, SLOT(slot_zoom(int)));
     connect(ui->zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(slot_setZoomFactor(int)));
     connect(ui->graphicsView->scene(), SIGNAL(pos(QPointF)), this, SLOT(slot_pos(QPointF)));
+    connect(ui->graphicsView->scene(), SIGNAL(itemAdded(Frame *)), this, SLOT(slot_itemAdded(Frame *)));
 }
 
 void MainWindow::zoomIn(int level)
@@ -98,6 +100,11 @@ void MainWindow::zoomOut(int level)
 void MainWindow::slot_pos(QPointF pointF)
 {
     ui->label_position->setText(tr("Position:（%1, %2）").arg((int)pointF.x()).arg((int)pointF.y()));
+}
+
+void MainWindow::slot_itemAdded(Frame *_frame)
+{
+    m_rootFrame->addChildItem(_frame);
 }
 
 void MainWindow::slot_zoom(int factor)
@@ -152,9 +159,16 @@ void MainWindow::on_horizontalLay_clicked()
         QRectF splitRect(topLeft.x() + splitWidth*i, topLeft.y(), splitWidth, height);
         Frame *frame = selectedItems.at(i);
         frame->setRect(splitRect);
+		frame->setOriginalWidthAndHeight(splitWidth, height);
+		frame->resetChildrenPos();
     }
     frame_new->setRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y());
-    ui->graphicsView->scene()->addItem(frame_new);
+	DropGraphicsScene *scene = (DropGraphicsScene *)(ui->graphicsView->scene());
+	scene->addItem(frame_new);
+    m_rootFrame->addChildItem(frame_new);
+    //TODO.
+	scene->clearAllItemSelected();
+	scene->afterAddNewFrame(frame_new);
 }
 
 void MainWindow::on_verticalLay_clicked()
@@ -189,12 +203,14 @@ void MainWindow::on_verticalLay_clicked()
         QRectF splitRect(topLeft.x(), topLeft.y() + splitHeight*i, width, splitHeight);
         Frame *frame = selectedItems.at(i);
         frame->setRect(splitRect);
-        FrameType frameType = frame->getType();
-        if(frameType == Vertical || frameType == Horizontal)
-        {
-            //frame->resetChildrenPos();
-        }
+		frame->setOriginalWidthAndHeight(width, splitHeight);
+        frame->resetChildrenPos();
     }
     frame_new->setRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y());
-    ui->graphicsView->scene()->addItem(frame_new);
+	DropGraphicsScene *scene = (DropGraphicsScene *)(ui->graphicsView->scene());
+    scene->addItem(frame_new);
+    m_rootFrame->addChildItem(frame_new);
+    //TODO.
+    scene->clearAllItemSelected();
+	scene->afterAddNewFrame(frame_new);
 }

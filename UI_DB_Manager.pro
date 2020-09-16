@@ -30,7 +30,8 @@ SOURCES += \
     dropgraphicsview.cpp \
     chip.cpp \
     itemslist.cpp \
-    frame.cpp
+    frame.cpp \
+    dropgraphicsscene.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -38,7 +39,8 @@ HEADERS += \
     fwd.h \
     chip.h \
     itemslist.h \
-    frame.h
+    frame.h \
+    dropgraphicsscene.h
 
 FORMS += \
         mainwindow.ui

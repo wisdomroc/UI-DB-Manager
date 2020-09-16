@@ -3,7 +3,7 @@
 
 #include <QtWidgets>
 
-enum FrameType { Rect1, Rect2, Rect3, Horizontal, Vertical };
+enum FrameType { Table, List, Tree, Horizontal, Vertical,Null };
 enum DragType { DragL, DragR, DragT, DragB, DragLT, DragLB, DragRT, DragRB };
 
 class Frame : public QGraphicsRectItem
@@ -13,25 +13,40 @@ public:
 	~Frame();
 
 public:
-	FrameType mFrameType;
-	QString mName;
+
     FrameType getType() const;
     void setDragType(DragType _dragType);
-	void startDraw(QGraphicsSceneMouseEvent * event);
-	void drawing(QGraphicsSceneMouseEvent * event);
     void resetChildrenPos();
+    void addChildItem(Frame *_frame);
 
-    void setParentItemS(Frame *frame);
+    void setParentItemS(Frame *_frame);
+    void setOriginalWidthAndHeight(int _width, int _height);
     void setOffset(qreal x_, qreal y_);
+
+    void drawing(QGraphicsSceneMouseEvent * event);
+
+private:
+
 protected:
 	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) Q_DECL_OVERRIDE;
 
 private:
-	QMenu *myContextMenu;
-    DragType dragType;
-    Frame *parentFrame;
-    qreal x_offset;
-    qreal y_offset;
+    Frame *m_parentFrame;
+    QString m_name;
+    QList<Frame *> m_childrenFrame;
+
+
+    DragType m_dragType;
+
+    FrameType m_frameType;
+    QMenu *m_contextMenu;
+
+	int m_width;
+	int m_height;
+
+    bool m_offsetFlag;
+    qreal m_offsetX;
+    qreal m_offsetY;
 };
 
 #endif // FRAME_H
