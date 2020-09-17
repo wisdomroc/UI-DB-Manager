@@ -59,7 +59,7 @@ private:
     void ModifyItem();
 	
 	void setChildInfo(Frame *curFrame);
-
+	QGraphicsItem *findRootParent(QGraphicsItem *_item);
 };
 
 

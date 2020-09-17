@@ -16,7 +16,7 @@ public:
 
     FrameType getType() const;
     void setDragType(DragType _dragType);
-    void resetChildrenPos();
+    void resetChildrenPos(bool firstAdjust);
     void addChildItem(Frame *_frame);
 
     void setParentItemS(Frame *_frame);

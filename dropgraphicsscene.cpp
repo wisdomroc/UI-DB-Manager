@@ -161,6 +161,19 @@ void DropGraphicsScene::afterAddNewFrame(Frame *_frame)
 	setChildInfo(_frame);
 }
 
+QGraphicsItem *DropGraphicsScene::findRootParent(QGraphicsItem *_item)
+{
+	QGraphicsItem *parentItem = _item->parentItem();
+	if (parentItem == nullptr)
+	{
+		return _item;
+	}
+	else
+	{
+		return findRootParent(_item);
+	}
+}
+
 // 鼠标按下获取当前单选中的QGraphicsProxyWidget图元对象
 void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -172,16 +185,8 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             //! [0]查找根Item即Frame
             qDebug() << "mouse press, item count: " << itemList.count();
             QGraphicsItem *item;
-            QGraphicsItem *baseItem = itemList.at(itemList.count() - 1);
-            QGraphicsItem *parentItem = baseItem->parentItem();
-            if (parentItem == nullptr)
-            {
-                item = baseItem;
-            }
-            else
-            {
-                item = parentItem;
-            }
+			item = findRootParent(itemList.last());
+            
             //! [0]
 
             //! 按住Ctrl键
@@ -194,6 +199,7 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 clearAllItemSelected();
             }
 			m_curFrame = qgraphicsitem_cast<Frame *>(item);
+			qDebug() << "rootFrame.type: " << m_curFrame->getType() << endl;
 
 			afterAddNewFrame(m_curFrame);
 			setChildInfo(m_curFrame);
@@ -307,7 +313,7 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         qDebug() << "x_offset:" << x_offset << ", y_offset:" << y_offset << ", width:" << width << ", height:" << height << ", m_startPos:" << m_startPos << endl;
 
         m_curFrame->setRect(m_startPos.x() + x_offset, m_startPos.y() + y_offset, width, height);
-        m_curFrame->resetChildrenPos();
+        m_curFrame->resetChildrenPos(false);
     }
 
     if(!is_drag)

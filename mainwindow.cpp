@@ -160,7 +160,7 @@ void MainWindow::on_horizontalLay_clicked()
         Frame *frame = selectedItems.at(i);
         frame->setRect(splitRect);
 		frame->setOriginalWidthAndHeight(splitWidth, height);
-		frame->resetChildrenPos();
+		frame->resetChildrenPos(true);
     }
     frame_new->setRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y());
 	DropGraphicsScene *scene = (DropGraphicsScene *)(ui->graphicsView->scene());
@@ -204,7 +204,7 @@ void MainWindow::on_verticalLay_clicked()
         Frame *frame = selectedItems.at(i);
         frame->setRect(splitRect);
 		frame->setOriginalWidthAndHeight(width, splitHeight);
-        frame->resetChildrenPos();
+        frame->resetChildrenPos(true);
     }
     frame_new->setRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y());
 	DropGraphicsScene *scene = (DropGraphicsScene *)(ui->graphicsView->scene());

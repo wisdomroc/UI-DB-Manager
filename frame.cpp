@@ -58,7 +58,7 @@ void Frame::setDragType(DragType _dragType)
     m_dragType = _dragType;
 }
 
-void Frame::resetChildrenPos()
+void Frame::resetChildrenPos(bool firstAdjust)
 {
     QList<QGraphicsItem *> children = this->childItems();
     QPointF topLeft = this->sceneBoundingRect().topLeft();
@@ -74,19 +74,24 @@ void Frame::resetChildrenPos()
             qreal new_height = frame->m_height;
             qreal width_standard = bottomRight.x() - frame->sceneBoundingRect().x();
             qreal height_standard = bottomRight.y() - frame->sceneBoundingRect().y();
-            if(new_height > height_standard)
-            {
-                new_height = height_standard;
-            }
-            if(new_width > width_standard)
-            {
-                new_width = width_standard;
-            }
+			if (firstAdjust)
+			{
+				if (new_height < height_standard)
+				{
+					new_height = height_standard;
+				}
+				if (new_width < width_standard)
+				{
+					new_width = width_standard;
+				}
+				frame->setOriginalWidthAndHeight(new_width, new_height);
+			}
+
             qDebug() << "offsetPoint: " << offsetPoint << endl;
             frame->setRect(topLeft.x() + offsetPoint.x(), topLeft.y() + offsetPoint.y(), new_width, new_height);
 
 			//! 递归查找子Item，并同样设置位置信息
-			frame->resetChildrenPos();
+			frame->resetChildrenPos(false);
 
 		}
         else
@@ -136,7 +141,7 @@ void Frame::drawing(QGraphicsSceneMouseEvent * event)
     }
 
     setRect(r);
-    resetChildrenPos();
+    resetChildrenPos(false);
     qDebug() << "after rect: " << r << endl;
 }
 
