@@ -1,19 +1,20 @@
-﻿#include "dropgraphicsview.h"
-#include <QtWidgets>
+﻿#include "dropwidget.h"
 #include "chip.h"
 
-DropGraphicsScene::DropGraphicsScene(QWidget *parent) : QGraphicsScene(parent),
-    m_curFrame(nullptr), is_drag(false), is_move(false)
+DropWidget::DropWidget(QWidget *parent) : QWidget(parent)
+            ,m_curFrame(nullptr), is_drag(false), is_move(false)
 {
     SetMouseMenu();
+    setAcceptDrops(true);
+	//setMouseTracking(true);
 }
 
-QList<Frame *> DropGraphicsScene::getSelectedItems()
+QList<Frame *> DropWidget::getSelectedItems()
 {
     return m_selectedItems;
 }
 
-void DropGraphicsScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+void DropWidget::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat("image/x-puzzle-piece"))
         event->accept();
@@ -21,7 +22,7 @@ void DropGraphicsScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
         event->ignore();
 }
 
-void DropGraphicsScene::SetMouseMenu()
+void DropWidget::SetMouseMenu()
 {
     QAction *deleteAction = new QAction(QIcon(":/Resources/delete.png"), tr("&Delete"), this);
     deleteAction->setShortcut(tr("Delete"));
@@ -36,43 +37,41 @@ void DropGraphicsScene::SetMouseMenu()
     myItemMenu->addAction(modifyAction);
 }
 
-void DropGraphicsScene::slot_deleteItem()
-{
-    //    QList<QGraphicsItem *> items = selectedItems();
-    //    QPointF point;
-    //    int count = items.count();
-    //    Frame *frame = (Frame *)items.at(count - 1);
-    //    emit deleteFrame(frame);
-    //    for (int i = 0; i < count; i++)
-    //    {
-    //        QGraphicsItem *item = items.at(i);
-    //        point = item->scenePos();
-    //        removeItem(item);
-    //    }
-}
-
-void DropGraphicsScene::DeleteItem()
+void DropWidget::slot_deleteItem()
 {
 
 }
 
-void DropGraphicsScene::slot_modifyItem()
+void DropWidget::DeleteItem()
 {
 
 }
 
-void DropGraphicsScene::ModifyItem()
+void DropWidget::slot_modifyItem()
 {
 
 }
 
-void DropGraphicsScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+void DropWidget::addItemToSelected(Frame *frame)
 {
-    qDebug() << "scenePos: " << event->scenePos() << ", pos: " << event->pos() << endl;
+    if(!m_selectedItems.contains(frame))
+    {
+        m_selectedItems.append(frame);
+    }
+}
+
+void DropWidget::ModifyItem()
+{
+
+}
+
+void DropWidget::dragMoveEvent(QDragMoveEvent *event)
+{
+    qDebug() << "pos: " << event->pos() << endl;
     event->accept();
 }
 
-void DropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent *event)
+void DropWidget::dropEvent(QDropEvent *event)
 {
     if (event->mimeData()->hasFormat("image/x-puzzle-piece"))
     {
@@ -80,12 +79,12 @@ void DropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent *event)
         QDataStream dataStream(&pieceData, QIODevice::ReadOnly);
         Piece piece;
         dataStream >> piece.type >> piece.pixmap;
-        QPointF point = event->scenePos();
+        QPointF point = (event->pos());
 
         if(piece.type == "list")
         {
-            Chip *chip = new Chip(QColor("steelBlue"), 100, 100);
-            addItem(chip);
+//            Chip *chip = new Chip(QColor("steelBlue"), 100, 100);
+//            addItem(chip);
         }
         else if(piece.type == "tree")
         {
@@ -117,76 +116,117 @@ void DropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
-void DropGraphicsScene::addTable(const QPointF &point)
+void DropWidget::addTable(const QPointF &point)
 {
-    Frame *frame = new Frame(Table, myItemMenu);
-    m_tableItems.append(frame);
-    QGraphicsTextItem *text = new QGraphicsTextItem(tr("%1%2").arg(QStringLiteral("表格")).arg(m_tableItems.count()), frame);
-    text->setDefaultTextColor(Qt::blue);
-    text->setFont(QFont("微软雅黑", 8));
-    text->setPos(point);
-    addItem(frame);
-	frame->setOriginalWidthAndHeight(300, 200);
-    frame->setRect(point.x(), point.y(), 300, 200);
-    emit itemAdded(frame);
+    Frame *label = new Frame(Frame::Table, new QMenu(), this);
+	label->setText("TableWidget");
+	label->setFixedSize(200, 200);
+	label->setFrameShape(QFrame::Box);
+	label->setFrameShadow(QFrame::Plain);
+	label->move(point.toPoint());
+	label->setVisible(true);
+
+    emit itemAdded();
 }
 
-void DropGraphicsScene::clearAllItemSelected()
+void DropWidget::clearAllItemSelected()
 {
-	//! 清除之前的Item
-	for (int i = 0; i < m_selectedItems.count(); i++)
-	{
-		Frame *frame = m_selectedItems.at(i);
-		frame->setBrush(QColor("transparent"));
-		frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-		frame->setOpacity(1);
-	}
-	m_selectedItems.clear();
+    /*
+    //! 清除之前的Item
+    for (int i = 0; i < m_selectedItems.count(); i++)
+    {
+        Frame *frame = m_selectedItems.at(i);
+        frame->setBrush(QColor("transparent"));
+        frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        frame->setOpacity(1);
+    }
+    m_selectedItems.clear();
+    */
 }
 
-void DropGraphicsScene::afterAddNewFrame(Frame *_frame)
+void DropWidget::afterAddNewFrame(Frame *_frame)
 {
-	//! 添加当前的Item
-	if (!m_selectedItems.contains(_frame))
-	{
-		m_selectedItems.append(_frame);
-	}
+    /*
+    //! 添加当前的Item
+    if (!m_selectedItems.contains(_frame))
+    {
+        m_selectedItems.append(_frame);
+    }
 
-	//! 设置被选中
-	
-	_frame->setOpacity(0.5);
-	_frame->setBrush(QColor("lightGreen"));
-	_frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    //! 设置被选中
 
-	setChildInfo(_frame);
+    _frame->setOpacity(0.5);
+    _frame->setBrush(QColor("lightGreen"));
+    _frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+    setChildInfo(_frame);
+    */
 }
 
-QGraphicsItem *DropGraphicsScene::findRootParent(QGraphicsItem *_item)
+QGraphicsItem *DropWidget::findRootParent(QGraphicsItem *_item)
 {
-	QGraphicsItem *parentItem = _item->parentItem();
-	if (parentItem == nullptr)
-	{
-		return _item;
-	}
-	else
-	{
-		return findRootParent(_item);
-	}
+    QGraphicsItem *parentItem = _item->parentItem();
+    if (parentItem == nullptr)
+    {
+        return _item;
+    }
+    else
+    {
+        return findRootParent(_item);
+    }
 }
 
 // 鼠标按下获取当前单选中的QGraphicsProxyWidget图元对象
-void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void DropWidget::mousePressEvent(QMouseEvent *event)
 {
+    
     if (event->button() == Qt::LeftButton)
     {
+		
+		QWidget *childWidget = this->childAt(event->pos());
+        //! 按住Ctrl键
+        if (QApplication::keyboardModifiers() != Qt::ControlModifier)
+        {
+            if(m_selectedItems.count() != 0)
+            {
+                foreach(Frame *frame, m_selectedItems)
+                {
+                    frame->setSelected(false);
+                    frame = nullptr;
+                }
+                if(m_curFrame != nullptr)
+                {
+                    m_curFrame->setSelected(false);
+                    m_curFrame = nullptr;
+                }
+            }
+        }
+        if (childWidget == nullptr)
+        {
+			return;
+        }
+
+		m_curFrame = (Frame *)childWidget;
+        m_curFrame->setSelected(true);
+        addItemToSelected(m_curFrame);
+
+		
+		is_move = true;
+		m_startPos = mapToParent(event->pos());
+		m_originalPos = m_curFrame->geometry().topLeft();
+
+
+
+
+		/*
         QList<QGraphicsItem *>itemList = items(event->scenePos());
         if(itemList.count() != 0)
         {
             //! [0]查找根Item即Frame
             qDebug() << "mouse press, item count: " << itemList.count();
             QGraphicsItem *item;
-			item = findRootParent(itemList.last());
-            
+            item = findRootParent(itemList.last());
+
             //! [0]
 
             //! 按住Ctrl键
@@ -198,11 +238,11 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             {
                 clearAllItemSelected();
             }
-			m_curFrame = qgraphicsitem_cast<Frame *>(item);
-			qDebug() << "rootFrame.type: " << m_curFrame->getType() << endl;
+            m_curFrame = qgraphicsitem_cast<Frame *>(item);
+            qDebug() << "rootFrame.type: " << m_curFrame->getType() << endl;
 
-			afterAddNewFrame(m_curFrame);
-			setChildInfo(m_curFrame);
+            afterAddNewFrame(m_curFrame);
+            setChildInfo(m_curFrame);
 
             //! [0] 拖拽
             double mouseX = event->scenePos().x();
@@ -271,41 +311,55 @@ void DropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 m_shiftOrg = event->scenePos();
             }
             m_curFrame->setDragType(dragType);
-			//! [0]
+            //! [0]
         }
         else
         {
             clearAllItemSelected();
         }
+		*/
     }
-    QGraphicsScene::mousePressEvent(event);
+	
+    QWidget::mousePressEvent(event);
+    
 }
 
-void DropGraphicsScene::setChildInfo(Frame *curFrame)
+void DropWidget::setChildInfo(Frame *curFrame)
 {
-	QList<QGraphicsItem *> children = curFrame->childItems();
-	int i = 1;
-	foreach(QGraphicsItem *item, children)
-	{
-		Frame *frame = qgraphicsitem_cast<Frame *>(item);
-		if (frame == nullptr)
-			return;
-		QPointF offsetPoint = frame->sceneBoundingRect().topLeft() - curFrame->sceneBoundingRect().topLeft(); //! TODO.这里加1进行修正
-		qDebug() << i << ", " << "offsetPoint-->" << offsetPoint << endl;
-		i++;
-		if (frame != nullptr)
-		{
-			frame->setParentItemS(curFrame);
-			frame->setOffset(offsetPoint.x(), offsetPoint.y());
-		}
-	}
+    /*
+    QList<QGraphicsItem *> children = curFrame->childItems();
+    int i = 1;
+    foreach(QGraphicsItem *item, children)
+    {
+        Frame *frame = qgraphicsitem_cast<Frame *>(item);
+        if (frame == nullptr)
+            return;
+        QPointF offsetPoint = frame->sceneBoundingRect().topLeft() - curFrame->sceneBoundingRect().topLeft(); //! TODO.这里加1进行修正
+        qDebug() << i << ", " << "offsetPoint-->" << offsetPoint << endl;
+        i++;
+        if (frame != nullptr)
+        {
+            frame->setParentItemS(curFrame);
+            frame->setOffset(offsetPoint.x(), offsetPoint.y());
+        }
+    }
+    */
 }
 
 // 鼠标移动过程中跟随位置改变
-void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void DropWidget::mouseMoveEvent(QMouseEvent *event)
 {
+	emit pos((event->pos()));
     if(is_move)
     {
+		QPointF curPos = mapToParent(event->pos());
+		m_offset = curPos.toPoint() - m_startPos;
+		if (m_curFrame == nullptr)
+			return;
+		m_curFrame->move(m_originalPos + m_offset);
+		
+
+		/*
         qreal x_offset = event->scenePos().x() - m_shiftOrg.x();
         qreal y_offset = event->scenePos().y() - m_shiftOrg.y();
         qreal width = m_curFrame->rect().width();
@@ -314,8 +368,9 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         m_curFrame->setRect(m_startPos.x() + x_offset, m_startPos.y() + y_offset, width, height);
         m_curFrame->resetChildrenPos(false);
+		*/
     }
-
+	/*
     if(!is_drag)
     {
         QList<QGraphicsItem *>itemList = items(event->scenePos(), Qt::IntersectsItemShape);
@@ -376,17 +431,19 @@ void DropGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         update();
     }
 
-    emit pos(event->scenePos());
-    QGraphicsScene::mouseMoveEvent(event);
+    
+    */
+
+
+    //QWidget::mouseMoveEvent(event);
 }
 // 鼠标释放后作为最后的位置
-void DropGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void DropWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if(is_move)
     {
-
     }
     is_drag = false;
     is_move = false;
-    QGraphicsScene::mouseReleaseEvent(event);
+    QWidget::mouseReleaseEvent(event);
 }

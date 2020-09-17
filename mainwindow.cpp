@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initGraphicsView();
     initUI();
 
-    m_rootFrame = new Frame(Null, new QMenu());
+    //m_rootFrame = new Frame(Null, new QMenu());
 }
 
 MainWindow::~MainWindow()
@@ -81,10 +81,12 @@ void MainWindow::initLeftControlsList()
 
 void MainWindow::initGraphicsView()
 {
-    connect(ui->graphicsView, SIGNAL(zoom(int)), this, SLOT(slot_zoom(int)));
-    connect(ui->zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(slot_setZoomFactor(int)));
-    connect(ui->graphicsView->scene(), SIGNAL(pos(QPointF)), this, SLOT(slot_pos(QPointF)));
-    connect(ui->graphicsView->scene(), SIGNAL(itemAdded(Frame *)), this, SLOT(slot_itemAdded(Frame *)));
+//    connect(ui->graphicsView, SIGNAL(zoom(int)), this, SLOT(slot_zoom(int)));
+//    connect(ui->zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(slot_setZoomFactor(int)));
+//    connect(ui->graphicsView->scene(), SIGNAL(pos(QPointF)), this, SLOT(slot_pos(QPointF)));
+//    connect(ui->graphicsView->scene(), SIGNAL(itemAdded(Frame *)), this, SLOT(slot_itemAdded(Frame *)));
+    connect(ui->userpanel, SIGNAL(itemAdded()), this, SLOT(slot_itemAdded()));
+	connect(ui->userpanel, SIGNAL(pos(QPointF)), this, SLOT(slot_pos(QPointF)));
 }
 
 void MainWindow::zoomIn(int level)
@@ -102,9 +104,9 @@ void MainWindow::slot_pos(QPointF pointF)
     ui->label_position->setText(tr("Position:（%1, %2）").arg((int)pointF.x()).arg((int)pointF.y()));
 }
 
-void MainWindow::slot_itemAdded(Frame *_frame)
+void MainWindow::slot_itemAdded()
 {
-    m_rootFrame->addChildItem(_frame);
+    //m_rootFrame->addChildItem(_frame);
 }
 
 void MainWindow::slot_zoom(int factor)
@@ -114,7 +116,7 @@ void MainWindow::slot_zoom(int factor)
 
 void MainWindow::slot_setZoomFactor(int factor)
 {
-    ui->graphicsView->setZoomFactor(factor - 250);
+    //ui->graphicsView->setZoomFactor(factor - 250);
 }
 
 void MainWindow::on_zoomInIcon_clicked()
@@ -129,6 +131,49 @@ void MainWindow::on_zoomOutIcon_clicked()
 
 void MainWindow::on_horizontalLay_clicked()
 {
+    QList<Frame *> selectedItems = ui->userpanel->getSelectedItems();
+    Frame *frame_new = new Frame(Frame::Horizontal, new QMenu());
+    qDebug() << "selected item count: " << selectedItems.count();
+    QPointF topLeft = QPointF(10000,10000);
+    QPointF bottomRight = QPointF(0, 0);
+    for(int i = 0; i < selectedItems.count(); i ++)
+    {
+        Frame *frame = selectedItems.at(i);
+        QRectF rect = frame->rect();
+        if(rect.x() < topLeft.x())
+            topLeft.rx() = rect.x();
+        if(rect.y() < topLeft.y())
+            topLeft.ry() = rect.y();
+        if(rect.x() + rect.width() > bottomRight.x())
+            bottomRight.rx() = rect.x() + rect.width();
+        if(rect.y() + rect.height() > bottomRight.y())
+            bottomRight.ry() = rect.y() + rect.height();
+        frame->setParent(frame_new);
+    }
+
+    qreal width = bottomRight.x() - topLeft.x();
+    qreal height = bottomRight.y() - topLeft.y();
+    qreal splitWidth = width/selectedItems.size();
+    qDebug() << "topLeft: " << topLeft << ", width: " << width << ", height: " << height << endl;
+    for(int i = 0; i < selectedItems.count(); i ++)
+    {
+        QRectF splitRect(topLeft.x() + splitWidth*i, topLeft.y(), splitWidth, height);
+        Frame *frame = selectedItems.at(i);
+        frame->setGeometry(splitRect.x(), splitRect.y(), splitRect.width(), splitRect.height());
+        frame->setOriginalWidthAndHeight(splitWidth, height);
+        frame->resetChildrenPos(true);
+    }
+    frame_new->setGeometry(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y());
+
+    ui->userpanel->addItemToSelected(frame_new);
+    m_rootFrame->addChildItem(frame_new);
+    //TODO.
+    ui->userpanel->clearAllItemSelected();
+    ui->userpanel->afterAddNewFrame(frame_new);
+
+
+
+    /*
     DropGraphicsScene *graphicsScene = (DropGraphicsScene *)(ui->graphicsView->scene());
     QList<Frame *> selectedItems = graphicsScene->getSelectedItems();
     Frame *frame_new = new Frame(Horizontal, new QMenu());
@@ -169,10 +214,12 @@ void MainWindow::on_horizontalLay_clicked()
     //TODO.
 	scene->clearAllItemSelected();
 	scene->afterAddNewFrame(frame_new);
+    */
 }
 
 void MainWindow::on_verticalLay_clicked()
 {
+    /*
     DropGraphicsScene *graphicsScene = (DropGraphicsScene *)(ui->graphicsView->scene());
     QList<Frame *> selectedItems = graphicsScene->getSelectedItems();
     Frame *frame_new = new Frame(Vertical, new QMenu());
@@ -213,4 +260,5 @@ void MainWindow::on_verticalLay_clicked()
     //TODO.
     scene->clearAllItemSelected();
 	scene->afterAddNewFrame(frame_new);
+    */
 }

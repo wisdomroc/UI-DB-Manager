@@ -32,7 +32,7 @@ private:
 
 private slots:
     void slot_pos(QPointF pointF);
-    void slot_itemAdded(Frame *_frame);
+    void slot_itemAdded();
     void slot_zoom(int factor);
     void slot_setZoomFactor(int factor);
     void on_zoomInIcon_clicked();

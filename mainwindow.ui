@@ -40,9 +40,12 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="DropGraphicsView" name="graphicsView">
-        <property name="cacheMode">
-         <set>QGraphicsView::CacheBackground</set>
+       <widget class="DropWidget" name="userpanel" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </item>
@@ -616,14 +619,15 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>DropGraphicsView</class>
-   <extends>QGraphicsView</extends>
-   <header>dropgraphicsview.h</header>
-  </customwidget>
-  <customwidget>
    <class>ItemsList</class>
    <extends>QListWidget</extends>
    <header>itemslist.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DropWidget</class>
+   <extends>QWidget</extends>
+   <header>dropwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

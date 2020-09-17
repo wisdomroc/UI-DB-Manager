@@ -3,16 +3,19 @@
 
 #include <QtWidgets>
 
-enum FrameType { Table, List, Tree, Horizontal, Vertical,Null };
-enum DragType { DragL, DragR, DragT, DragB, DragLT, DragLB, DragRT, DragRB };
 
-class Frame : public QGraphicsRectItem
+
+
+class Frame : public QLabel
 {
+    Q_OBJECT
+    Q_ENUMS(FrameType)
+    Q_ENUMS(DragType)
 public:
-	Frame(FrameType frameType, QMenu *contextMenu);
-	~Frame();
-
-public:
+    enum FrameType { Table, List, Tree, Horizontal, Vertical,Null };
+    enum DragType { DragL, DragR, DragT, DragB, DragLT, DragLB, DragRT, DragRB };
+    explicit Frame(FrameType frameType, QMenu *contextMenu, QWidget *parent = nullptr);
+    ~Frame();
 
     FrameType getType() const;
     void setDragType(DragType _dragType);
@@ -23,12 +26,15 @@ public:
     void setOriginalWidthAndHeight(int _width, int _height);
     void setOffset(qreal x_, qreal y_);
 
+    void setSelected(bool selected);
+
     void drawing(QGraphicsSceneMouseEvent * event);
 
 private:
 
 protected:
-	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) Q_DECL_OVERRIDE;
+    void contextMenuEvent(QContextMenuEvent *event);
+
 
 private:
     Frame *m_parentFrame;

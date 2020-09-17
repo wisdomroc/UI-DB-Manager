@@ -1,32 +1,35 @@
 ﻿#include "frame.h"
 #include <QPen>
+#include <QWidget>
 
-Frame::Frame(FrameType frameType, QMenu *contextMenu):m_parentFrame(nullptr),
+Frame::Frame(FrameType frameType, QMenu *contextMenu, QWidget *parent):QLabel(parent), m_parentFrame(nullptr),
             m_offsetX(0), m_offsetY(0), m_offsetFlag(false)
 {
     m_frameType = frameType;
     m_contextMenu = contextMenu;
-    setAcceptHoverEvents(true);
     switch (frameType) {
     case Table:
     case List:
     case Tree:
-        setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        //setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         break;
     case Horizontal:
     case Vertical:
-        setPen(QPen(QBrush(Qt::red, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        //setPen(QPen(QBrush(Qt::red, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         break;
     }
 
+    QPalette palette;
+    palette.setBrush(QPalette::Background, QBrush(QColor("transparent")));
+    setPalette(palette);
+    setAutoFillBackground(true);
 }
 
 Frame::~Frame()
 {
-
 }
 
-FrameType Frame::getType() const
+Frame::FrameType Frame::getType() const
 {
     return m_frameType;
 }
@@ -50,7 +53,22 @@ void Frame::setOffset(qreal x_, qreal y_)
         m_offsetX = x_;
         m_offsetY = y_;
         m_offsetFlag = true;
-	}
+    }
+}
+
+void Frame::setSelected(bool selected)
+{
+    QPalette palette;
+    if(selected)
+    {
+        palette.setBrush(QPalette::Background, QBrush(QColor("lightGreen")));
+        setPalette(palette);
+    }
+    else
+    {
+        palette.setBrush(QPalette::Background, QBrush(QColor("transparent")));
+        setPalette(palette);
+    }
 }
 
 void Frame::setDragType(DragType _dragType)
@@ -60,6 +78,7 @@ void Frame::setDragType(DragType _dragType)
 
 void Frame::resetChildrenPos(bool firstAdjust)
 {
+    /*
     QList<QGraphicsItem *> children = this->childItems();
     QPointF topLeft = this->sceneBoundingRect().topLeft();
     QPointF bottomRight = this->sceneBoundingRect().bottomRight();
@@ -100,6 +119,7 @@ void Frame::resetChildrenPos(bool firstAdjust)
             item->setPos(standardPoint.x(), standardPoint.y());
         }
     }
+    */
 }
 
 void Frame::drawing(QGraphicsSceneMouseEvent * event)
@@ -140,7 +160,7 @@ void Frame::drawing(QGraphicsSceneMouseEvent * event)
         r = QRectF(QPointF(re.left(), event->scenePos().y()), QSizeF(event->scenePos().x() - re.left(), re.bottom() - event->scenePos().y()));
     }
 
-    setRect(r);
+    //setRec(r);
     resetChildrenPos(false);
     qDebug() << "after rect: " << r << endl;
 }
@@ -151,9 +171,7 @@ void Frame::addChildItem(Frame *_frame)
         m_childrenFrame.append(_frame);
 }
 
-void Frame::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+void Frame::contextMenuEvent(QContextMenuEvent *event)
 {
-    scene()->clearSelection();
-    setSelected(true);
-    m_contextMenu->exec(event->screenPos());
+    m_contextMenu->exec(event->pos());
 }
