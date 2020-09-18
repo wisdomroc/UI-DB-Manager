@@ -28,12 +28,13 @@ public:
 
     void setSelected(bool selected);
 
-    void drawing(QGraphicsSceneMouseEvent * event);
+    void drawing(QMouseEvent * event);
 
 private:
 
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
+	void paintEvent(QPaintEvent *event);
 
 
 private:

@@ -129,28 +129,78 @@ void MainWindow::on_zoomOutIcon_clicked()
     zoomOut(5);
 }
 
+Frame *MainWindow::findRootParent(Frame *_item)
+{
+	QObject *parentItem = _item->parent();
+	Frame *frame = qobject_cast<Frame *>(parentItem);
+	if (frame == nullptr)
+	{
+		return _item;
+	}
+	else
+	{
+		return findRootParent(frame);
+	}
+}
+
 void MainWindow::on_horizontalLay_clicked()
 {
     QList<Frame *> selectedItems = ui->userpanel->getSelectedItems();
-    Frame *frame_new = new Frame(Frame::Horizontal, new QMenu());
+	if (selectedItems.count() == 0)
+	{
+		QObjectList list = ui->userpanel->children();
+		QObject *obj = list.last();
+		Frame *frame = qobject_cast<Frame *>(obj);
+		frame = findRootParent(frame);
+		QHBoxLayout *hBoxLayout = new QHBoxLayout(ui->userpanel);
+		hBoxLayout->addWidget(frame);
+		ui->userpanel->setLayout(hBoxLayout);
+		return;
+	}
+
+
+	Frame *hFrame = new Frame(Frame::Horizontal, new QMenu(), ui->userpanel);
+	hFrame->setVisible(true);
+    QHBoxLayout *hBoxLayout = new QHBoxLayout(hFrame);
+	hBoxLayout->setMargin(0);
+	hBoxLayout->setSpacing(6);
     qDebug() << "selected item count: " << selectedItems.count();
     QPointF topLeft = QPointF(10000,10000);
     QPointF bottomRight = QPointF(0, 0);
+	int widthCount = 0;
+	int heightCount = 0;
     for(int i = 0; i < selectedItems.count(); i ++)
     {
         Frame *frame = selectedItems.at(i);
-        QRectF rect = frame->rect();
-        if(rect.x() < topLeft.x())
-            topLeft.rx() = rect.x();
-        if(rect.y() < topLeft.y())
-            topLeft.ry() = rect.y();
-        if(rect.x() + rect.width() > bottomRight.x())
-            bottomRight.rx() = rect.x() + rect.width();
-        if(rect.y() + rect.height() > bottomRight.y())
-            bottomRight.ry() = rect.y() + rect.height();
-        frame->setParent(frame_new);
-    }
+        QRect rect = frame->geometry();
+		qDebug() << "number: " << i << ", geometry:" << rect << endl;
+		QPoint topLeft_ = rect.topLeft();
+		int width = rect.width();
+		int height = rect.height();
+		widthCount += width;
+		heightCount = height;
 
+
+        if(topLeft_.x() < topLeft.x())
+            topLeft.rx() = topLeft_.x();
+        if(topLeft_.y() < topLeft.y())
+            topLeft.ry() = topLeft_.y();
+        if(topLeft_.x() + width > bottomRight.x())
+            bottomRight.rx() = topLeft_.x() + width;
+        if(topLeft_.y() + width > bottomRight.y())
+            bottomRight.ry() = topLeft_.y() + height;
+        hBoxLayout->addWidget(frame);
+    }
+	widthCount += 6 * (selectedItems.count() - 1);
+
+	ui->userpanel->clearAllItemSelected();
+	ui->userpanel->afterAddNewFrame(hFrame);
+	qDebug() << topLeft << "," << bottomRight << endl;
+	hFrame->setGeometry(QRect(topLeft.x(), topLeft.y(), widthCount, heightCount));
+
+
+
+    /*
     qreal width = bottomRight.x() - topLeft.x();
     qreal height = bottomRight.y() - topLeft.y();
     qreal splitWidth = width/selectedItems.size();
@@ -164,12 +214,13 @@ void MainWindow::on_horizontalLay_clicked()
         frame->resetChildrenPos(true);
     }
     frame_new->setGeometry(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y());
+    */
 
-    ui->userpanel->addItemToSelected(frame_new);
-    m_rootFrame->addChildItem(frame_new);
-    //TODO.
-    ui->userpanel->clearAllItemSelected();
-    ui->userpanel->afterAddNewFrame(frame_new);
+//    ui->userpanel->addItemToSelected(frame_new);
+//    m_rootFrame->addChildItem(frame_new);
+
+//    ui->userpanel->clearAllItemSelected();
+//    ui->userpanel->afterAddNewFrame(frame_new);
 
 
 
@@ -261,4 +312,44 @@ void MainWindow::on_verticalLay_clicked()
     scene->clearAllItemSelected();
 	scene->afterAddNewFrame(frame_new);
     */
+
+	QList<Frame *> selectedItems = ui->userpanel->getSelectedItems();
+	Frame *hFrame = new Frame(Frame::Vertical, new QMenu(), ui->userpanel);
+	hFrame->setVisible(true);
+	QVBoxLayout *vBoxLayout = new QVBoxLayout(hFrame);
+	vBoxLayout->setMargin(0);
+	vBoxLayout->setSpacing(6);
+	qDebug() << "selected item count: " << selectedItems.count();
+	QPointF topLeft = QPointF(10000, 10000);
+	QPointF bottomRight = QPointF(0, 0);
+	int widthCount = 0;
+	int heightCount = 0;
+	for (int i = 0; i < selectedItems.count(); i++)
+	{
+		Frame *frame = selectedItems.at(i);
+		QRect rect = frame->geometry();
+		qDebug() << "number: " << i << ", geometry:" << rect << endl;
+		QPoint topLeft_ = rect.topLeft();
+		int width = rect.width();
+		int height = rect.height();
+		widthCount = width;
+		heightCount += height;
+
+
+		if (topLeft_.x() < topLeft.x())
+			topLeft.rx() = topLeft_.x();
+		if (topLeft_.y() < topLeft.y())
+			topLeft.ry() = topLeft_.y();
+		if (topLeft_.x() + width > bottomRight.x())
+			bottomRight.rx() = topLeft_.x() + width;
+		if (topLeft_.y() + width > bottomRight.y())
+			bottomRight.ry() = topLeft_.y() + height;
+		vBoxLayout->addWidget(frame);
+	}
+	heightCount += 6 * (selectedItems.count() - 1);
+
+	ui->userpanel->clearAllItemSelected();
+	ui->userpanel->afterAddNewFrame(hFrame);
+	qDebug() << topLeft << "," << bottomRight << endl;
+	hFrame->setGeometry(QRect(topLeft.x(), topLeft.y(), widthCount, heightCount));
 }

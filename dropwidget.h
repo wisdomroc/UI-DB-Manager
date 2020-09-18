@@ -43,7 +43,7 @@ private:
 
     bool            is_drag;
     bool            is_move;
-//    DragType        dragType;
+    Frame::DragType        dragType;
 private:
     struct Piece {
         QPixmap pixmap;
@@ -62,7 +62,7 @@ private:
     void ModifyItem();
 
     void setChildInfo(Frame *curFrame);
-    QGraphicsItem *findRootParent(QGraphicsItem *_item);
+    Frame *findRootParent(Frame *_item);
 };
 
 #endif // DROPWIDGET_H

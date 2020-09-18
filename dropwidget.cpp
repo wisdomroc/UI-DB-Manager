@@ -6,7 +6,7 @@ DropWidget::DropWidget(QWidget *parent) : QWidget(parent)
 {
     SetMouseMenu();
     setAcceptDrops(true);
-	//setMouseTracking(true);
+	setMouseTracking(true);
 }
 
 QList<Frame *> DropWidget::getSelectedItems()
@@ -120,7 +120,7 @@ void DropWidget::addTable(const QPointF &point)
 {
     Frame *label = new Frame(Frame::Table, new QMenu(), this);
 	label->setText("TableWidget");
-	label->setFixedSize(200, 200);
+    label->setMinimumSize(200, 200);
 	label->setFrameShape(QFrame::Box);
 	label->setFrameShadow(QFrame::Plain);
 	label->move(point.toPoint());
@@ -131,22 +131,19 @@ void DropWidget::addTable(const QPointF &point)
 
 void DropWidget::clearAllItemSelected()
 {
-    /*
     //! 清除之前的Item
     for (int i = 0; i < m_selectedItems.count(); i++)
     {
         Frame *frame = m_selectedItems.at(i);
-        frame->setBrush(QColor("transparent"));
-        frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        frame->setOpacity(1);
+		QPalette palette;
+		palette.setBrush(QPalette::Background, QBrush(QColor("transparent")));
+		frame->setPalette(palette);
     }
     m_selectedItems.clear();
-    */
 }
 
 void DropWidget::afterAddNewFrame(Frame *_frame)
 {
-    /*
     //! 添加当前的Item
     if (!m_selectedItems.contains(_frame))
     {
@@ -155,24 +152,24 @@ void DropWidget::afterAddNewFrame(Frame *_frame)
 
     //! 设置被选中
 
-    _frame->setOpacity(0.5);
-    _frame->setBrush(QColor("lightGreen"));
-    _frame->setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	QPalette palette;
+	palette.setBrush(QPalette::Background, QBrush(QColor("transparent")));
+	_frame->setPalette(palette);
 
     setChildInfo(_frame);
-    */
 }
 
-QGraphicsItem *DropWidget::findRootParent(QGraphicsItem *_item)
+Frame *DropWidget::findRootParent(Frame *_item)
 {
-    QGraphicsItem *parentItem = _item->parentItem();
-    if (parentItem == nullptr)
+    QObject *parentItem = _item->parent();
+	Frame *frame = qobject_cast<Frame *>(parentItem);
+    if (frame == nullptr)
     {
         return _item;
     }
     else
     {
-        return findRootParent(_item);
+        return findRootParent(frame);
     }
 }
 
@@ -194,6 +191,7 @@ void DropWidget::mousePressEvent(QMouseEvent *event)
                     frame->setSelected(false);
                     frame = nullptr;
                 }
+				m_selectedItems.clear();
                 if(m_curFrame != nullptr)
                 {
                     m_curFrame->setSelected(false);
@@ -205,10 +203,12 @@ void DropWidget::mousePressEvent(QMouseEvent *event)
         {
 			return;
         }
-
+		
 		m_curFrame = (Frame *)childWidget;
+		m_curFrame = findRootParent(m_curFrame);
         m_curFrame->setSelected(true);
         addItemToSelected(m_curFrame);
+		qDebug() << "m_curFrame.geometry: " << m_curFrame->geometry();
 
 		
 		is_move = true;
@@ -216,6 +216,70 @@ void DropWidget::mousePressEvent(QMouseEvent *event)
 		m_originalPos = m_curFrame->geometry().topLeft();
 
 
+		//! [0] 拖拽
+		int mouseX = event->pos().x();
+		int mouseY = event->pos().y();
+		QRect rect = m_curFrame->geometry();
+		int myTop = rect.top();
+		int myLeft = rect.left();
+		int myBottom = rect.bottom();
+		int myRight = rect.right();
+
+		if ((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL) && (myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL))
+		{
+			is_drag = true;
+			is_move = false;
+			dragType = Frame::DragLT;
+		}
+		else if ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL) && (myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL))
+		{
+			is_drag = true;
+			is_move = false;
+			dragType = Frame::DragRB;
+		}
+		else if ((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL) && (myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL))
+		{
+			is_drag = true;
+			is_move = false;
+			dragType = Frame::DragLB;
+		}
+		else if ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL) && (myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL))
+		{
+			is_drag = true;
+			is_move = false;
+			dragType = Frame::DragRT;
+		}
+		else if ((myLeft - SMALL_INTERVAL < mouseX) && (mouseX < myLeft + SMALL_INTERVAL))
+		{
+			is_drag = true;
+			is_move = false;
+			dragType = Frame::DragL;
+		}
+		else if ((myRight - SMALL_INTERVAL < mouseX) && (mouseX < myRight + SMALL_INTERVAL))
+		{
+			is_drag = true;
+			is_move = false;
+			dragType = Frame::DragR;
+		}
+		else if ((myTop - SMALL_INTERVAL < mouseY) && (mouseY < myTop + SMALL_INTERVAL))
+		{
+			is_drag = true;
+			is_move = false;
+			dragType = Frame::DragT;
+		}
+		else if ((myBottom - SMALL_INTERVAL < mouseY) && (mouseY < myBottom + SMALL_INTERVAL))
+		{
+			is_drag = true;
+			is_move = false;
+			dragType = Frame::DragB;
+		}
+		else
+		{
+			is_drag = false;
+			is_move = true;
+		}
+		m_curFrame->setDragType(dragType);
+		//! [0]
 
 
 		/*
@@ -357,7 +421,7 @@ void DropWidget::mouseMoveEvent(QMouseEvent *event)
 		if (m_curFrame == nullptr)
 			return;
 		m_curFrame->move(m_originalPos + m_offset);
-		
+		return;
 
 		/*
         qreal x_offset = event->scenePos().x() - m_shiftOrg.x();
@@ -370,31 +434,39 @@ void DropWidget::mouseMoveEvent(QMouseEvent *event)
         m_curFrame->resetChildrenPos(false);
 		*/
     }
-	/*
+	
+
     if(!is_drag)
     {
-        QList<QGraphicsItem *>itemList = items(event->scenePos(), Qt::IntersectsItemShape);
-        if(itemList.count() != 0)
-        {
-            //! [0]查找根Item即Frame
-            QGraphicsItem *item;
-            QGraphicsItem *baseItem = itemList.at(itemList.count() - 1);
-            QGraphicsItem *parentItem = baseItem->parentItem();
-            if (parentItem == nullptr)
-            {
-                item = baseItem;
-            }
-            else
-            {
-                item = parentItem;
-            }
-            //! [0]
-            QGraphicsItem *tmpItem = qgraphicsitem_cast<Frame *>(item);
-            if(tmpItem == nullptr)
-                return;
-            QRectF rect = tmpItem->sceneBoundingRect();
-            double mouseX = event->scenePos().x();
-            double mouseY = event->scenePos().y();
+		QWidget *childWidget = this->childAt(event->pos());
+		//! 按住Ctrl键
+			if (m_selectedItems.count() != 0)
+			{
+				foreach(Frame *frame, m_selectedItems)
+				{
+					frame->setSelected(false);
+					frame = nullptr;
+				}
+				m_selectedItems.clear();
+				if (m_curFrame != nullptr)
+				{
+					m_curFrame->setSelected(false);
+					m_curFrame = nullptr;
+				}
+			}
+		
+		if (childWidget == nullptr)
+		{
+			return;
+		}
+
+		Frame *tmpItem = (Frame *)childWidget;
+		tmpItem = findRootParent(tmpItem);
+
+
+            QRectF rect = tmpItem->geometry();
+            double mouseX = event->pos().x();
+            double mouseY = event->pos().y();
             //qDebug() << "mouse move, sceneBoundingRect-->" << rect;
             double myTop = rect.top();
             double myLeft = rect.left();
@@ -422,7 +494,7 @@ void DropWidget::mouseMoveEvent(QMouseEvent *event)
             {
                 tmpItem->setCursor(Qt::ArrowCursor);
             }
-        }
+        
     }
     else
     {
@@ -432,7 +504,7 @@ void DropWidget::mouseMoveEvent(QMouseEvent *event)
     }
 
     
-    */
+    
 
 
     //QWidget::mouseMoveEvent(event);

@@ -7,22 +7,13 @@ Frame::Frame(FrameType frameType, QMenu *contextMenu, QWidget *parent):QLabel(pa
 {
     m_frameType = frameType;
     m_contextMenu = contextMenu;
-    switch (frameType) {
-    case Table:
-    case List:
-    case Tree:
-        //setPen(QPen(QBrush(Qt::black, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        break;
-    case Horizontal:
-    case Vertical:
-        //setPen(QPen(QBrush(Qt::red, Qt::SolidPattern), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        break;
-    }
 
-    QPalette palette;
-    palette.setBrush(QPalette::Background, QBrush(QColor("transparent")));
+	//! 初始化设置为透明
+	QPalette palette;
+	palette.setBrush(QPalette::Background, QBrush(QColor("transparent")));
     setPalette(palette);
     setAutoFillBackground(true);
+	setMouseTracking(true);
 }
 
 Frame::~Frame()
@@ -122,46 +113,48 @@ void Frame::resetChildrenPos(bool firstAdjust)
     */
 }
 
-void Frame::drawing(QGraphicsSceneMouseEvent * event)
+
+void Frame::drawing(QMouseEvent * event)
 {
-    QRectF r;
-    QRectF re = rect();
+    QRect r;
+    QRect re = geometry();
     qDebug() << "pre rect: " << re << endl;
     if ((this->cursor().shape() == Qt::SizeHorCursor) && (m_dragType == DragL))
     {
-        r = QRectF(QPointF(event->scenePos().x(), re.top()), QSizeF(re.right() - event->scenePos().x(), re.bottom() - re.top()));
+        r = QRect(QPoint(event->pos().x(), re.top()), QSize(re.right() - event->pos().x(), re.bottom() - re.top()));
     }
     else if ((this->cursor().shape() == Qt::SizeHorCursor) && (m_dragType == DragR))
     {
-        r = QRectF(re.topLeft(), QSizeF(event->scenePos().x() - re.left(), re.bottom() - re.top()));
+        r = QRect(re.topLeft(), QSize(event->pos().x() - re.left(), re.bottom() - re.top()));
     }
     else if ((this->cursor().shape() == Qt::SizeVerCursor) && (m_dragType == DragT))
     {
-        r = QRectF(QPointF(re.left(), event->scenePos().y()), QSizeF(re.right() - re.left(), re.bottom() - event->scenePos().y()));
+        r = QRect(QPoint(re.left(), event->pos().y()), QSize(re.right() - re.left(), re.bottom() - event->pos().y()));
     }
     else if ((this->cursor().shape() == Qt::SizeVerCursor) && (m_dragType == DragB))
     {
-        r = QRectF(re.topLeft(), QSizeF(re.right() - re.left(), event->scenePos().y() - re.top()));
+        r = QRect(re.topLeft(), QSize(re.right() - re.left(), event->pos().y() - re.top()));
     }
     else if ((this->cursor().shape() == Qt::SizeFDiagCursor) && (m_dragType == DragLT))
     {
-        r = QRectF(QPointF(event->scenePos().x(), event->scenePos().y()), QSizeF(re.right() - event->scenePos().x(), re.bottom() - event->scenePos().y()));
+        r = QRect(QPoint(event->pos().x(), event->pos().y()), QSize(re.right() - event->pos().x(), re.bottom() - event->pos().y()));
     }
     else if ((this->cursor().shape() == Qt::SizeFDiagCursor) && (m_dragType == DragRB))
     {
-        r = QRectF(re.topLeft(), QSizeF(event->scenePos().x() - re.left(), event->scenePos().y() - re.top()));
+        r = QRect(re.topLeft(), QSize(event->pos().x() - re.left(), event->pos().y() - re.top()));
     }
     else if ((this->cursor().shape() == Qt::SizeBDiagCursor) && (m_dragType == DragLB))
     {
-        r = QRectF(QPointF(event->scenePos().x(), re.top()), QSizeF(re.right() - event->scenePos().x(), event->scenePos().y() - re.top()));
+        r = QRect(QPoint(event->pos().x(), re.top()), QSize(re.right() - event->pos().x(), event->pos().y() - re.top()));
     }
     else if ((this->cursor().shape() == Qt::SizeBDiagCursor) && (m_dragType == DragRT))
     {
-        r = QRectF(QPointF(re.left(), event->scenePos().y()), QSizeF(event->scenePos().x() - re.left(), re.bottom() - event->scenePos().y()));
+        r = QRect(QPoint(re.left(), event->pos().y()), QSize(event->pos().x() - re.left(), re.bottom() - event->pos().y()));
     }
 
-    //setRec(r);
-    resetChildrenPos(false);
+	qDebug() << "geometry-->" << r << endl;
+    setGeometry(r);
+    //resetChildrenPos(false);
     qDebug() << "after rect: " << r << endl;
 }
 
@@ -174,4 +167,40 @@ void Frame::addChildItem(Frame *_frame)
 void Frame::contextMenuEvent(QContextMenuEvent *event)
 {
     m_contextMenu->exec(event->pos());
+}
+
+
+void Frame::paintEvent(QPaintEvent *event)
+{
+	QPainter painter(this);
+	painter.drawText(0, 100, this->text());
+	switch (m_frameType)
+	{
+	case Table:
+	case List:
+	case Tree:
+	{
+		QPen pen;
+		pen.setStyle(Qt::SolidLine);
+		pen.setWidth(1);
+		pen.setBrush(Qt::black);
+		pen.setCapStyle(Qt::RoundCap);
+		pen.setJoinStyle(Qt::RoundJoin);
+		painter.setPen(pen);
+	}
+	break;
+	case Horizontal:
+	case Vertical:
+	{
+		QPen pen;
+		pen.setStyle(Qt::SolidLine);
+		pen.setWidth(1);
+		pen.setBrush(Qt::red);
+		pen.setCapStyle(Qt::RoundCap);
+		pen.setJoinStyle(Qt::RoundJoin);
+		painter.setPen(pen);
+	}
+	break;
+	}
+	painter.drawRect(0, 0, this->width()-1, this->height()-1);
 }

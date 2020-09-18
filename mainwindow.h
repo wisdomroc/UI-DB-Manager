@@ -29,6 +29,7 @@ private:
 
     void zoomIn(int level);
     void zoomOut(int level);
+	Frame *findRootParent(Frame *_item);
 
 private slots:
     void slot_pos(QPointF pointF);
