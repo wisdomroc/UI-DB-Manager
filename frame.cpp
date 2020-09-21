@@ -121,19 +121,19 @@ void Frame::drawing(QMouseEvent * event)
     qDebug() << "pre rect: " << re << endl;
     if ((this->cursor().shape() == Qt::SizeHorCursor) && (m_dragType == DragL))
     {
-        r = QRect(QPoint(event->pos().x(), re.top()), QSize(re.right() - event->pos().x(), re.bottom() - re.top()));
+        r = QRect(QPoint(event->pos().x(), re.top()), QSize(re.right() - event->pos().x(), height()));
     }
     else if ((this->cursor().shape() == Qt::SizeHorCursor) && (m_dragType == DragR))
     {
-        r = QRect(re.topLeft(), QSize(event->pos().x() - re.left(), re.bottom() - re.top()));
+        r = QRect(re.topLeft(), QSize(event->pos().x() - re.left(), height()));
     }
     else if ((this->cursor().shape() == Qt::SizeVerCursor) && (m_dragType == DragT))
     {
-        r = QRect(QPoint(re.left(), event->pos().y()), QSize(re.right() - re.left(), re.bottom() - event->pos().y()));
+        r = QRect(QPoint(re.left(), event->pos().y()), QSize(width(), re.bottom() - event->pos().y()));
     }
     else if ((this->cursor().shape() == Qt::SizeVerCursor) && (m_dragType == DragB))
     {
-        r = QRect(re.topLeft(), QSize(re.right() - re.left(), event->pos().y() - re.top()));
+        r = QRect(re.topLeft(), QSize(width(), event->pos().y() - re.top()));
     }
     else if ((this->cursor().shape() == Qt::SizeFDiagCursor) && (m_dragType == DragLT))
     {

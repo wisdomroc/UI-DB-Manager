@@ -43,7 +43,9 @@ private:
 
     bool            is_drag;
     bool            is_move;
-    Frame::DragType        dragType;
+    Frame::DragType dragType;
+    int             m_tableNumber;
+
 private:
     struct Piece {
         QPixmap pixmap;
@@ -61,7 +63,6 @@ private:
     void DeleteItem();
     void ModifyItem();
 
-    void setChildInfo(Frame *curFrame);
     Frame *findRootParent(Frame *_item);
 };
 

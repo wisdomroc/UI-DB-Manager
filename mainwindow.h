@@ -26,6 +26,9 @@ private:
     void initUI();
     void initLeftControlsList();
     void initGraphicsView();
+    QList<Frame *> findRootFrames();
+    void initTreeAccordingRootFrames();
+    void initOneTreeItem(Frame *frame, QTreeWidgetItem *item);
 
     void zoomIn(int level);
     void zoomOut(int level);
@@ -42,8 +45,11 @@ private slots:
     void on_verticalLay_clicked();
 
 private:
-    Ui::MainWindow *ui;
-    Frame *m_rootFrame;
+    Ui::MainWindow		*ui;
+
+	QTreeWidgetItem		*m_topLevelItem;
+    int					m_horizontalNumber;
+    int					m_verticalNumber;
 };
 
 #endif // MAINWINDOW_H
