@@ -464,7 +464,6 @@ void MainWindow::selectOneFrame(Frame *frame, QString name)
 		QString layoutName = frame->layout()->objectName();
 		if (layoutName == name)
 		{
-			//frame->setSelected(true);
 			ui->userpanel->addItemToSelected(frame);
 			return;
 		}
@@ -479,20 +478,22 @@ void MainWindow::selectOneFrame(Frame *frame, QString name)
 			}
 		}
 	}
-	QString _name = frame->objectName();
-	if (_name == name)
-	{
-		//frame->setSelected(true);
-		ui->userpanel->addItemToSelected(frame);
-		return;
-	}
 	else
 	{
-		QObjectList objList = frame->children();
-		for (int i = 0; i < objList.count(); i++)
+		QString _name = frame->objectName();
+		if (_name == name)
 		{
-			Frame *_frame = qobject_cast<Frame *>(objList.at(i));
-			selectOneFrame(_frame, name);
+			ui->userpanel->addItemToSelected(frame);
+			return;
+		}
+		else
+		{
+			QObjectList objList = frame->children();
+			for (int i = 0; i < objList.count(); i++)
+			{
+				Frame *_frame = qobject_cast<Frame *>(objList.at(i));
+				selectOneFrame(_frame, name);
+			}
 		}
 	}
 }
