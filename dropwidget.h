@@ -14,7 +14,6 @@ public:
     QList<Frame *> getSelectedItems();
 
     void clearAllItemSelected();
-    void afterAddNewFrame(Frame *_frame);
 
     void addItemToSelected(Frame *frame);
 
@@ -29,9 +28,12 @@ protected:
 
 signals:
     void pos(QPointF pointF);
-    void itemAdded();
+    void itemAdded(Frame *frame);
+	void itemSelected(QList<Frame *> frameList);
+	void clearAllSelected();
 
 private slots:
+	void slot_rightKeySelected();
     void slot_deleteItem();
     void slot_modifyItem();
 private:

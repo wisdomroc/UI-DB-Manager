@@ -166,7 +166,8 @@ void Frame::addChildItem(Frame *_frame)
 
 void Frame::contextMenuEvent(QContextMenuEvent *event)
 {
-    m_contextMenu->exec(event->pos());
+	emit rightKeySelected();
+    m_contextMenu->exec(mapToGlobal(event->pos()));
 }
 
 

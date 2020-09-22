@@ -30,7 +30,8 @@ public:
 
     void drawing(QMouseEvent * event);
 
-private:
+signals:
+	void rightKeySelected();
 
 protected:
     void contextMenuEvent(QContextMenuEvent *event);

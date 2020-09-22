@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     initLeftControlsList();
-    initGraphicsView();
+    initConnections();
     initUI();
 }
 
@@ -84,10 +84,13 @@ void MainWindow::initLeftControlsList()
     }
 }
 
-void MainWindow::initGraphicsView()
+void MainWindow::initConnections()
 {
-    connect(ui->userpanel, SIGNAL(itemAdded()), this, SLOT(slot_itemAdded()));
+    connect(ui->userpanel, SIGNAL(itemAdded(Frame *)), this, SLOT(slot_itemAdded(Frame *)));
+	connect(ui->userpanel, SIGNAL(itemSelected(QList<Frame *>)), this, SLOT(slot_itemSelected(QList<Frame *>)));
+	connect(ui->userpanel, SIGNAL(clearAllSelected()), this, SLOT(slot_clearAllSelected()));
     connect(ui->userpanel, SIGNAL(pos(QPointF)), this, SLOT(slot_pos(QPointF)));
+	connect(ui->treeWidget, SIGNAL(itemPressed(QTreeWidgetItem *, int )), this, SLOT(slot_itemPressed(QTreeWidgetItem *, int )));
 }
 
 QList<Frame *> MainWindow::findRootFrames()
@@ -168,12 +171,17 @@ void MainWindow::initOneTreeItem(Frame *frame, QTreeWidgetItem *item)
     }
 }
 
-void MainWindow::initTreeAccordingRootFrames()
+void MainWindow::preInitTreeWidget()
 {
-    ui->treeWidget->clear();
+	ui->treeWidget->clear();
 	m_topLevelItem = new QTreeWidgetItem(ui->treeWidget, QStringList() << "userpanel");
 	m_topLevelItem->setExpanded(true);
 	ui->treeWidget->addTopLevelItem(m_topLevelItem);
+}
+
+void MainWindow::initTreeAccordingRootFrames()
+{
+	preInitTreeWidget();
 
     QList<Frame *> rootFrames = findRootFrames();
     for(int i = 0; i < rootFrames.count(); i ++)
@@ -194,14 +202,47 @@ void MainWindow::zoomOut(int level)
     ui->zoomSlider->setValue(ui->zoomSlider->value() - level);
 }
 
+void MainWindow::slot_itemPressed(QTreeWidgetItem *item, int column)
+{
+	Q_UNUSED(column)
+	QString name = item->text(0);
+	QList<Frame *> frameList = findRootFrames();
+	
+	ui->userpanel->clearAllItemSelected();
+	for (int i = 0; i < frameList.count(); i++)
+	{
+		selectOneFrame(frameList.at(i), name);
+	}
+}
+
 void MainWindow::slot_pos(QPointF pointF)
 {
     ui->label_position->setText(tr("Position:（%1, %2）").arg((int)pointF.x()).arg((int)pointF.y()));
 }
 
-void MainWindow::slot_itemAdded()
+void MainWindow::slot_itemAdded(Frame *frame)
 {
+	preInitTreeWidget();
 
+	QList<Frame *> rootFrames = findRootFrames();
+	for (int i = 0; i < rootFrames.count(); i++)
+	{
+		QStringList names;
+		Frame *frame = rootFrames.at(i);
+		QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(m_topLevelItem, QStringList() << frame->objectName());
+		treeWidgetItem->setExpanded(true);
+		m_topLevelItem->addChild(treeWidgetItem);
+	}
+}
+
+void MainWindow::slot_itemSelected(QList<Frame *> frameList)
+{
+	selectTreeWidget(frameList);
+}
+
+void MainWindow::slot_clearAllSelected()
+{
+	ui->treeWidget->clearSelection();
 }
 
 void MainWindow::slot_zoom(int factor)
@@ -290,12 +331,15 @@ void MainWindow::on_horizontalLay_clicked()
         if(topLeft_.y() + width > bottomRight.y())
             bottomRight.ry() = topLeft_.y() + height;
         hBoxLayout->addWidget(frame);
-		frame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+		if (frame->getType() == Frame::Horizontal)
+			frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		else
+			frame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     }
     widthCount += 6 * (selectedItems.count() - 1);
 
     ui->userpanel->clearAllItemSelected();
-    ui->userpanel->afterAddNewFrame(hFrame);
+    ui->userpanel->addItemToSelected(hFrame);
     qDebug() << topLeft << "," << widthCount << "," << heightCount << endl;
     hFrame->setGeometry(QRect(topLeft.x(), topLeft.y(), widthCount, heightCount));
 
@@ -356,16 +400,99 @@ void MainWindow::on_verticalLay_clicked()
         if (topLeft_.y() + width > bottomRight.y())
             bottomRight.ry() = topLeft_.y() + height;
         vBoxLayout->addWidget(frame);
-		frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+		if (frame->getType() == Frame::Vertical)
+			frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		else
+			frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     }
     heightCount += 6 * (selectedItems.count() - 1);
 
     ui->userpanel->clearAllItemSelected();
-    ui->userpanel->afterAddNewFrame(hFrame);
-	qDebug() << topLeft << "," << widthCount << "," << heightCount << endl;
-    hFrame->setGeometry(QRect(topLeft.x(), topLeft.y(), widthCount, heightCount));
+    ui->userpanel->addItemToSelected(hFrame);
 
+    hFrame->setGeometry(QRect(topLeft.x(), topLeft.y(), widthCount, heightCount));
     initTreeAccordingRootFrames();
 }
 
+void MainWindow::selectTreeWidget(QList<Frame *> frameList)
+{
+	ui->treeWidget->clearSelection();
 
+	QString name;
+	Frame::FrameType frameType;
+	Frame *frame;
+	for (int i = 0; i < frameList.count(); i++)
+	{
+		frame = frameList.at(i);
+		frameType = frameList.at(i)->getType();
+		if (frameType == Frame::Horizontal || frameType == Frame::Vertical)
+		{
+			name = frame->layout()->objectName();
+		}
+		else
+		{
+			name = frame->objectName();
+		}
+		selectOneTreeWidgetItem(m_topLevelItem, name);
+	}
+}
+
+void MainWindow::selectOneTreeWidgetItem(QTreeWidgetItem *item, QString name)
+{
+	int count = item->childCount();
+	for (int i = 0; i < count; i++)
+	{
+		QTreeWidgetItem *_item = item->child(i);
+		if (_item->text(0) == name)
+		{
+			_item->setSelected(true);
+			return;
+		}
+		int _count = _item->childCount();
+		if (_count != 0)
+		{
+			selectOneTreeWidgetItem(_item, name);
+		}
+	}
+}
+
+void MainWindow::selectOneFrame(Frame *frame, QString name)
+{
+	Frame::FrameType frameType = frame->getType();
+	if (frameType == Frame::Vertical || frameType == Frame::Horizontal)
+	{
+		QString layoutName = frame->layout()->objectName();
+		if (layoutName == name)
+		{
+			//frame->setSelected(true);
+			ui->userpanel->addItemToSelected(frame);
+			return;
+		}
+		else
+		{
+			int count = frame->layout()->count();
+			for (int i = 0; i < count; i++)
+			{
+				QWidget *widget = frame->layout()->itemAt(i)->widget();
+				Frame *_frame = qobject_cast<Frame *>(widget);
+				selectOneFrame(_frame, name);
+			}
+		}
+	}
+	QString _name = frame->objectName();
+	if (_name == name)
+	{
+		//frame->setSelected(true);
+		ui->userpanel->addItemToSelected(frame);
+		return;
+	}
+	else
+	{
+		QObjectList objList = frame->children();
+		for (int i = 0; i < objList.count(); i++)
+		{
+			Frame *_frame = qobject_cast<Frame *>(objList.at(i));
+			selectOneFrame(_frame, name);
+		}
+	}
+}

@@ -25,18 +25,25 @@ public:
 private:
     void initUI();
     void initLeftControlsList();
-    void initGraphicsView();
+    void initConnections();
     QList<Frame *> findRootFrames();
     void initTreeAccordingRootFrames();
     void initOneTreeItem(Frame *frame, QTreeWidgetItem *item);
+	void selectTreeWidget(QList<Frame *> frameList);
+	void selectOneTreeWidgetItem(QTreeWidgetItem *item, QString name);
+	void selectOneFrame(Frame *frame, QString name);
+	void preInitTreeWidget();
 
     void zoomIn(int level);
     void zoomOut(int level);
 	Frame *findRootParent(Frame *_item);
 
 private slots:
+	void slot_itemPressed(QTreeWidgetItem *item, int column);
     void slot_pos(QPointF pointF);
-    void slot_itemAdded();
+    void slot_itemAdded(Frame *frame);
+	void slot_itemSelected(QList<Frame *> frameList);
+	void slot_clearAllSelected();
     void slot_zoom(int factor);
     void slot_setZoomFactor(int factor);
     void on_zoomInIcon_clicked();

@@ -57,6 +57,8 @@ void DropWidget::addItemToSelected(Frame *frame)
     if(!m_selectedItems.contains(frame))
     {
         m_selectedItems.append(frame);
+		frame->setSelected(true);
+		emit itemSelected(m_selectedItems);
     }
 }
 
@@ -111,9 +113,18 @@ void DropWidget::dropEvent(QDropEvent *event)
     }
 }
 
+void DropWidget::slot_rightKeySelected()
+{
+	Frame *frame = qobject_cast<Frame *>(sender());
+	clearAllItemSelected();
+	addItemToSelected(frame);
+	
+}
+
 void DropWidget::addTable(const QPointF &point)
 {
-    Frame *frame = new Frame(Frame::Table, new QMenu(), this);
+    Frame *frame = new Frame(Frame::Table, myItemMenu, this);
+	connect(frame, SIGNAL(rightKeySelected()), this, SLOT(slot_rightKeySelected()));
     QString name = tr("TableWidget_%1").arg(m_tableNumber ++);
     frame->setText(name);
     frame->setObjectName(name);
@@ -123,7 +134,7 @@ void DropWidget::addTable(const QPointF &point)
     frame->move(point.toPoint());
     frame->setVisible(true);
 
-    emit itemAdded();
+    emit itemAdded(frame);
 }
 
 void DropWidget::clearAllItemSelected()
@@ -143,20 +154,7 @@ void DropWidget::clearAllItemSelected()
             m_curFrame = nullptr;
         }
     }
-}
-
-void DropWidget::afterAddNewFrame(Frame *_frame)
-{
-    //! 添加当前的Item
-    if (!m_selectedItems.contains(_frame))
-    {
-        m_selectedItems.append(_frame);
-    }
-
-    //! 设置被选中
-    QPalette palette;
-    palette.setBrush(QPalette::Background, QBrush(QColor("transparent")));
-    _frame->setPalette(palette);
+	emit clearAllSelected();
 }
 
 Frame *DropWidget::findRootParent(Frame *_item)
