@@ -1,5 +1,7 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "gwriter.h"
+#include "greader.h"
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
 # pragma execution_character_set("utf-8")
@@ -27,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initLeftControlsList();
     initConnections();
     initUI();
+    initMenu();
 }
 
 MainWindow::~MainWindow()
@@ -67,9 +70,15 @@ void MainWindow::initUI()
 	ui->zoomInIcon->setVisible(false);
 	ui->zoomOutIcon->setVisible(false);
 	ui->zoomSlider->setVisible(false);
+}
 
-	m_topLevelItem = new QTreeWidgetItem(ui->treeWidget, QStringList() << "userpanel");
-	m_topLevelItem->setExpanded(true);
+void MainWindow::initMenu()
+{
+	QMenu *menu1 = ui->menuBar->addMenu(tr("文件"));
+	QAction *action_open = menu1->addAction(tr("打开"));
+	QAction *action_save = menu1->addAction(tr("保存"));
+    connect(action_open, &QAction::triggered, this, &MainWindow::slot_open);
+    connect(action_save, &QAction::triggered, this, &MainWindow::slot_save);
 }
 
 void MainWindow::initLeftControlsList()
@@ -115,7 +124,7 @@ QList<Frame *> MainWindow::findRootFrames()
     return rootFrameList;
 }
 
-void MainWindow::initOneTreeItem(Frame *frame, QTreeWidgetItem *item)
+void MainWindow::initOneTreeItem(Frame *frame, QTreeWidgetItem *item, int level)
 {
     QStringList names;
     Frame::FrameType frameType = frame->getType();
@@ -124,16 +133,18 @@ void MainWindow::initOneTreeItem(Frame *frame, QTreeWidgetItem *item)
     {
         QHBoxLayout *hBoxLayout = (QHBoxLayout *)(frame->layout());
         QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(item, QStringList() << hBoxLayout->objectName());
-		treeWidgetItem->setExpanded(true);
+        treeWidgetItem->setData(0, Qt::UserRole, tr("LEVEL_%1").arg(level));
+        treeWidgetItem->setExpanded(true);
         item->addChild(treeWidgetItem);
         int childCount = hBoxLayout->count();
 
+		++level;
         for(int i = 0; i < childCount; i ++)
         {
 			QLayoutItem *layoutItem = hBoxLayout->itemAt(i);
 			QWidget *widget = layoutItem->widget();
             Frame *frame = (Frame *)(widget);
-            initOneTreeItem(frame, treeWidgetItem);
+            initOneTreeItem(frame, treeWidgetItem, level);
         }
     }
         break;
@@ -142,15 +153,18 @@ void MainWindow::initOneTreeItem(Frame *frame, QTreeWidgetItem *item)
         QVBoxLayout *vBoxLayout = (QVBoxLayout *)(frame->layout());
         
         QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(item, QStringList() << vBoxLayout->objectName());
-		treeWidgetItem->setExpanded(true);
+        treeWidgetItem->setData(0, Qt::UserRole, tr("LEVEL_%1").arg(level));
+        treeWidgetItem->setExpanded(true);
         item->addChild(treeWidgetItem);
         int childCount = vBoxLayout->count();
+
+		++level;
         for(int i = 0; i < childCount; i ++)
         {
 			QLayoutItem *layoutItem = vBoxLayout->itemAt(i);
 			QWidget *widget = layoutItem->widget();
 			Frame *frame = (Frame *)(widget);
-            initOneTreeItem(frame, treeWidgetItem);
+            initOneTreeItem(frame, treeWidgetItem, level);
         }
     }
         break;
@@ -160,7 +174,8 @@ void MainWindow::initOneTreeItem(Frame *frame, QTreeWidgetItem *item)
     {
         QString name = frame->objectName();
         QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(item, QStringList() << name);
-		treeWidgetItem->setExpanded(true);
+        treeWidgetItem->setData(0, Qt::UserRole, tr("LEVEL_%1").arg(level));
+        treeWidgetItem->setExpanded(true);
         item->addChild(treeWidgetItem);
 
     }
@@ -175,6 +190,7 @@ void MainWindow::preInitTreeWidget()
 {
 	ui->treeWidget->clear();
 	m_topLevelItem = new QTreeWidgetItem(ui->treeWidget, QStringList() << "userpanel");
+    m_topLevelItem->setData(0, Qt::UserRole, tr("LEVEL_0"));
 	m_topLevelItem->setExpanded(true);
 	ui->treeWidget->addTopLevelItem(m_topLevelItem);
 }
@@ -188,8 +204,79 @@ void MainWindow::initTreeAccordingRootFrames()
     {
         QStringList names;
         Frame *frame = rootFrames.at(i);
-        initOneTreeItem(frame, m_topLevelItem);
+        initOneTreeItem(frame, m_topLevelItem, 1);
     }
+}
+
+void MainWindow::initUserPanelAccordingTreeWidget()
+{
+	int count = ui->treeWidget->topLevelItemCount();
+	for (int i = 0; i < count; i++)
+	{
+		QTreeWidgetItem *item = ui->treeWidget->topLevelItem(i);
+		if (item->text(0) == "userpanel")
+		{
+			initUserPanelAccordindOneTreeWidgetItem(item, NULL);
+		}
+		else
+		{
+
+		}
+	}
+}
+
+void MainWindow::initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, Frame *parent)
+{
+	int count = item->childCount();
+	for (int i = 0; i < count; i++)
+	{
+		QTreeWidgetItem *_item = item->child(i);
+		if (_item->text(0).contains("horizontal"))
+		{
+			Frame *frame = new Frame(Frame::Horizontal, new QMenu(), ui->userpanel);
+			QHBoxLayout *hBoxLayout = new QHBoxLayout(frame);
+			frame->setLayout(hBoxLayout);
+			frame->setText(_item->text(0));
+			frame->setObjectName(_item->text(0));
+			frame->setMinimumSize(200, 200);
+			frame->setFrameShape(QFrame::Box);
+			frame->setFrameShadow(QFrame::Plain);
+			frame->setVisible(true);
+			int _count = _item->childCount();
+			if (_count != 0)
+			{
+				initUserPanelAccordindOneTreeWidgetItem(_item, frame);
+			}
+		}
+		else if (_item->text(0).contains("vertical"))
+		{
+			Frame *frame = new Frame(Frame::Vertical, new QMenu(), ui->userpanel);
+			QVBoxLayout *vBoxLayout = new QVBoxLayout(frame);
+			frame->setLayout(vBoxLayout);
+			frame->setText(_item->text(0));
+			frame->setObjectName(_item->text(0));
+			frame->setMinimumSize(200, 200);
+			frame->setFrameShape(QFrame::Box);
+			frame->setFrameShadow(QFrame::Plain);
+			frame->setVisible(true);
+			int _count = _item->childCount();
+			if (_count != 0)
+			{
+				initUserPanelAccordindOneTreeWidgetItem(_item, frame);
+			}
+		}
+		else
+		{
+			Frame *frame = new Frame(Frame::Table, new QMenu(), parent);
+			frame->setText(_item->text(0));
+			frame->setObjectName(_item->text(0));
+			frame->setMinimumSize(200, 200);
+			frame->setFrameShape(QFrame::Box);
+			frame->setFrameShadow(QFrame::Plain);
+			frame->setVisible(true);
+			parent->layout()->addWidget(frame);
+		}
+	}
 }
 
 void MainWindow::zoomIn(int level)
@@ -230,7 +317,8 @@ void MainWindow::slot_itemAdded(Frame *frame)
 		QStringList names;
 		Frame *frame = rootFrames.at(i);
 		QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(m_topLevelItem, QStringList() << frame->objectName());
-		treeWidgetItem->setExpanded(true);
+        treeWidgetItem->setData(0, Qt::UserRole, 1);
+        treeWidgetItem->setExpanded(true);
 		m_topLevelItem->addChild(treeWidgetItem);
 	}
 }
@@ -277,6 +365,68 @@ Frame *MainWindow::findRootParent(Frame *_item)
     {
         return findRootParent(frame);
     }
+}
+
+void MainWindow::slot_open()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("打开"), "", tr("XML (*.xml);;TET (*.txt)"));
+    if(fileName.isEmpty())
+        return;
+
+    initUserPanelFromFile(fileName);
+}
+
+void MainWindow::slot_save()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("保存"), "", tr("XML (*.xml);;TXT (*.txt)"));
+    if(fileName.isEmpty())
+        return;
+
+    saveUserPanelToFile(fileName);
+}
+
+void MainWindow::initUserPanelFromFile(const QString &fileName)
+{
+
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, tr("QXmlStream Bookmarks"),
+                             tr("Cannot read file %1:\n%2.")
+                             .arg(QDir::toNativeSeparators(fileName),
+                                  file.errorString()));
+        return;
+    }
+
+    GReader reader(ui->treeWidget);
+    if (!reader.read(&file)) 
+	{
+        QMessageBox::warning(this, tr("QXmlStream Bookmarks"),
+                             tr("Parse error in file %1:\n\n%2")
+                             .arg(QDir::toNativeSeparators(fileName),
+                                  reader.errorString()));
+    } 
+	else 
+	{
+        statusBar()->showMessage(tr("File loaded"), 2000);
+    }
+
+	initUserPanelAccordingTreeWidget();
+}
+
+void MainWindow::saveUserPanelToFile(const QString &fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, tr("QXmlStream G"),
+                             tr("Cannot write file %1:\n%2.")
+                             .arg(QDir::toNativeSeparators(fileName),
+                                  file.errorString()));
+        return;
+    }
+
+    GWriter writer(ui->treeWidget);
+    if (writer.writeFile(&file))
+        statusBar()->showMessage(tr("File saved"), 2000);
 }
 
 void MainWindow::on_horizontalLay_clicked()

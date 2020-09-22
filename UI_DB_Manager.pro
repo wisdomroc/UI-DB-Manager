@@ -30,7 +30,9 @@ SOURCES += \
     chip.cpp \
     itemslist.cpp \
     frame.cpp \
-    dropwidget.cpp
+    dropwidget.cpp \
+    greader.cpp \
+    gwriter.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -38,7 +40,9 @@ HEADERS += \
     chip.h \
     itemslist.h \
     frame.h \
-    dropwidget.h
+    dropwidget.h \
+    greader.h \
+    gwriter.h
 
 FORMS += \
         mainwindow.ui

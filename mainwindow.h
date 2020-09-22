@@ -24,11 +24,16 @@ public:
 
 private:
     void initUI();
+	void initMenu();
+    void initUserPanelFromFile(const QString &fileName);
+    void saveUserPanelToFile(const QString &fileName);
     void initLeftControlsList();
     void initConnections();
     QList<Frame *> findRootFrames();
     void initTreeAccordingRootFrames();
-    void initOneTreeItem(Frame *frame, QTreeWidgetItem *item);
+	void initUserPanelAccordingTreeWidget();
+	void initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, Frame *parent);
+    void initOneTreeItem(Frame *frame, QTreeWidgetItem *item, int level);
 	void selectTreeWidget(QList<Frame *> frameList);
 	void selectOneTreeWidgetItem(QTreeWidgetItem *item, QString name);
 	void selectOneFrame(Frame *frame, QString name);
@@ -39,6 +44,8 @@ private:
 	Frame *findRootParent(Frame *_item);
 
 private slots:
+    void slot_open();
+    void slot_save();
 	void slot_itemPressed(QTreeWidgetItem *item, int column);
     void slot_pos(QPointF pointF);
     void slot_itemAdded(Frame *frame);

@@ -7,6 +7,7 @@
 #include <QGraphicsItem>
 #include <QDropEvent>
 #include <QGraphicsSceneMouseEvent>
+#include <QStandardPaths>
 
 #define INTERVAL		34	//
 #define RECT_INTERVAL	12	//
