@@ -77,8 +77,10 @@ void MainWindow::initMenu()
 	QMenu *menu1 = ui->menuBar->addMenu(tr("文件"));
 	QAction *action_open = menu1->addAction(tr("打开"));
 	QAction *action_save = menu1->addAction(tr("保存"));
+    QAction *action_close = menu1->addAction(tr("关闭"));
     connect(action_open, &QAction::triggered, this, &MainWindow::slot_open);
     connect(action_save, &QAction::triggered, this, &MainWindow::slot_save);
+    connect(action_close, &QAction::triggered, [=](){ qApp->quit(); });
 }
 
 void MainWindow::initLeftControlsList()
@@ -235,10 +237,12 @@ void MainWindow::initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, 
 		{
 			Frame *frame = new Frame(Frame::Horizontal, new QMenu(), ui->userpanel);
 			QHBoxLayout *hBoxLayout = new QHBoxLayout(frame);
+			hBoxLayout->setObjectName(_item->text(0));
+			hBoxLayout->setMargin(0);
 			frame->setLayout(hBoxLayout);
-			frame->setText(_item->text(0));
 			frame->setObjectName(_item->text(0));
-			frame->setMinimumSize(200, 200);
+			//! TODO.
+			frame->setMinimumSize(406, 200);
 			frame->setFrameShape(QFrame::Box);
 			frame->setFrameShadow(QFrame::Plain);
 			frame->setVisible(true);
@@ -252,10 +256,12 @@ void MainWindow::initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, 
 		{
 			Frame *frame = new Frame(Frame::Vertical, new QMenu(), ui->userpanel);
 			QVBoxLayout *vBoxLayout = new QVBoxLayout(frame);
+			vBoxLayout->setObjectName(_item->text(0));
+			vBoxLayout->setMargin(0);
 			frame->setLayout(vBoxLayout);
-			frame->setText(_item->text(0));
 			frame->setObjectName(_item->text(0));
-			frame->setMinimumSize(200, 200);
+			//! TODO.
+			frame->setMinimumSize(200, 406);
 			frame->setFrameShape(QFrame::Box);
 			frame->setFrameShadow(QFrame::Plain);
 			frame->setVisible(true);
@@ -324,7 +330,7 @@ void MainWindow::slot_itemAdded(Frame *frame)
 }
 
 void MainWindow::slot_itemSelected(QList<Frame *> frameList)
-{
+{	//! TODO.
 	selectTreeWidget(frameList);
 }
 
