@@ -213,77 +213,22 @@ void MainWindow::initTreeAccordingRootFrames()
 void MainWindow::initUserPanelAccordingTreeWidget()
 {
 	int count = ui->treeWidget->topLevelItemCount();
-	for (int i = 0; i < count; i++)
+	if (count != 1)
 	{
-		QTreeWidgetItem *item = ui->treeWidget->topLevelItem(i);
-		if (item->text(0) == "userpanel")
+		QMessageBox::information(this, tr("注意"), tr("根节点不止一个"));
+		return;
+	}
+	else
+	{
+		m_topLevelItem = ui->treeWidget->topLevelItem(0);
+		if (m_topLevelItem->text(0) == "userpanel")
 		{
-			initUserPanelAccordindOneTreeWidgetItem(item, NULL);
-		}
-		else
-		{
-
+			ui->userpanel->initUserPanelAccordindOneTreeWidgetItem(m_topLevelItem, NULL);
 		}
 	}
 }
 
-void MainWindow::initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, Frame *parent)
-{
-	int count = item->childCount();
-	for (int i = 0; i < count; i++)
-	{
-		QTreeWidgetItem *_item = item->child(i);
-		if (_item->text(0).contains("horizontal"))
-		{
-			Frame *frame = new Frame(Frame::Horizontal, new QMenu(), ui->userpanel);
-			QHBoxLayout *hBoxLayout = new QHBoxLayout(frame);
-			hBoxLayout->setObjectName(_item->text(0));
-			hBoxLayout->setMargin(0);
-			frame->setLayout(hBoxLayout);
-			frame->setObjectName(_item->text(0));
-			//! TODO.
-			frame->setMinimumSize(406, 200);
-			frame->setFrameShape(QFrame::Box);
-			frame->setFrameShadow(QFrame::Plain);
-			frame->setVisible(true);
-			int _count = _item->childCount();
-			if (_count != 0)
-			{
-				initUserPanelAccordindOneTreeWidgetItem(_item, frame);
-			}
-		}
-		else if (_item->text(0).contains("vertical"))
-		{
-			Frame *frame = new Frame(Frame::Vertical, new QMenu(), ui->userpanel);
-			QVBoxLayout *vBoxLayout = new QVBoxLayout(frame);
-			vBoxLayout->setObjectName(_item->text(0));
-			vBoxLayout->setMargin(0);
-			frame->setLayout(vBoxLayout);
-			frame->setObjectName(_item->text(0));
-			//! TODO.
-			frame->setMinimumSize(200, 406);
-			frame->setFrameShape(QFrame::Box);
-			frame->setFrameShadow(QFrame::Plain);
-			frame->setVisible(true);
-			int _count = _item->childCount();
-			if (_count != 0)
-			{
-				initUserPanelAccordindOneTreeWidgetItem(_item, frame);
-			}
-		}
-		else
-		{
-			Frame *frame = new Frame(Frame::Table, new QMenu(), parent);
-			frame->setText(_item->text(0));
-			frame->setObjectName(_item->text(0));
-			frame->setMinimumSize(200, 200);
-			frame->setFrameShape(QFrame::Box);
-			frame->setFrameShadow(QFrame::Plain);
-			frame->setVisible(true);
-			parent->layout()->addWidget(frame);
-		}
-	}
-}
+
 
 void MainWindow::zoomIn(int level)
 {
@@ -315,6 +260,7 @@ void MainWindow::slot_pos(QPointF pointF)
 
 void MainWindow::slot_itemAdded(Frame *frame)
 {
+	/*
 	preInitTreeWidget();
 
 	QList<Frame *> rootFrames = findRootFrames();
@@ -327,6 +273,9 @@ void MainWindow::slot_itemAdded(Frame *frame)
         treeWidgetItem->setExpanded(true);
 		m_topLevelItem->addChild(treeWidgetItem);
 	}
+	*/
+
+	initTreeAccordingRootFrames();
 }
 
 void MainWindow::slot_itemSelected(QList<Frame *> frameList)

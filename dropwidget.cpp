@@ -121,6 +121,78 @@ void DropWidget::slot_rightKeySelected()
 	
 }
 
+void DropWidget::initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, Frame *parent)
+{
+	int count = item->childCount();
+	for (int i = 0; i < count; i++)
+	{
+		QTreeWidgetItem *_item = item->child(i);
+		if (_item->text(0).contains("horizontal"))
+		{
+			Frame *frame = new Frame(Frame::Horizontal, new QMenu(), this);
+			connect(frame, SIGNAL(rightKeySelected()), this, SLOT(slot_rightKeySelected()));
+			QHBoxLayout *hBoxLayout = new QHBoxLayout(frame);
+			hBoxLayout->setObjectName(_item->text(0));
+			hBoxLayout->setMargin(0);
+			frame->setLayout(hBoxLayout);
+			frame->setObjectName(_item->text(0));
+			//! TODO.
+			frame->setMinimumSize(406, 200);
+			frame->setFrameShape(QFrame::Box);
+			frame->setFrameShadow(QFrame::Plain);
+			frame->setVisible(true);
+			int _count = _item->childCount();
+			if (_count != 0)
+			{
+				initUserPanelAccordindOneTreeWidgetItem(_item, frame);
+			}
+		}
+		else if (_item->text(0).contains("vertical"))
+		{
+			Frame *frame = new Frame(Frame::Vertical, myItemMenu, this);
+			connect(frame, SIGNAL(rightKeySelected()), this, SLOT(slot_rightKeySelected()));
+			QVBoxLayout *vBoxLayout = new QVBoxLayout(frame);
+			vBoxLayout->setObjectName(_item->text(0));
+			vBoxLayout->setMargin(0);
+			frame->setLayout(vBoxLayout);
+			frame->setObjectName(_item->text(0));
+			//! TODO.
+			frame->setMinimumSize(200, 406);
+			frame->setFrameShape(QFrame::Box);
+			frame->setFrameShadow(QFrame::Plain);
+			frame->setVisible(true);
+			int _count = _item->childCount();
+			if (_count != 0)
+			{
+				initUserPanelAccordindOneTreeWidgetItem(_item, frame);
+			}
+		}
+		else
+		{
+			Frame *frame;
+			if (parent == NULL)
+			{
+				frame = new Frame(Frame::Table, myItemMenu, this);
+			}
+			else
+			{
+				frame = new Frame(Frame::Table, myItemMenu, parent);
+			}
+			connect(frame, SIGNAL(rightKeySelected()), this, SLOT(slot_rightKeySelected()));
+			frame->setText(_item->text(0));
+			frame->setObjectName(_item->text(0));
+			frame->setMinimumSize(200, 200);
+			frame->setFrameShape(QFrame::Box);
+			frame->setFrameShadow(QFrame::Plain);
+			frame->setVisible(true);
+			if (parent != NULL)
+			{
+				parent->layout()->addWidget(frame);
+			}
+		}
+	}
+}
+
 void DropWidget::addTable(const QPointF &point)
 {
     Frame *frame = new Frame(Frame::Table, myItemMenu, this);

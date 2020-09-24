@@ -32,7 +32,7 @@ private:
     QList<Frame *> findRootFrames();
     void initTreeAccordingRootFrames();
 	void initUserPanelAccordingTreeWidget();
-	void initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, Frame *parent);
+
     void initOneTreeItem(Frame *frame, QTreeWidgetItem *item, int level);
 	void selectTreeWidget(QList<Frame *> frameList);
 	void selectOneTreeWidgetItem(QTreeWidgetItem *item, QString name);

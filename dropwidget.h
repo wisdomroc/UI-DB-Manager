@@ -14,8 +14,8 @@ public:
     QList<Frame *> getSelectedItems();
 
     void clearAllItemSelected();
-
     void addItemToSelected(Frame *frame);
+	void initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, Frame *parent);
 
 
 protected:
@@ -66,6 +66,7 @@ private:
     void ModifyItem();
 
     Frame *findRootParent(Frame *_item);
+	
 };
 
 #endif // DROPWIDGET_H
