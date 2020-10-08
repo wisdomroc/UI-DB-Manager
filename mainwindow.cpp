@@ -228,8 +228,6 @@ void MainWindow::initUserPanelAccordingTreeWidget()
 	}
 }
 
-
-
 void MainWindow::zoomIn(int level)
 {
     ui->zoomSlider->setValue(ui->zoomSlider->value() + level);
