@@ -129,7 +129,7 @@ void DropWidget::initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, 
 		QTreeWidgetItem *_item = item->child(i);
 		if (_item->text(0).contains("horizontal"))
 		{
-			Frame *frame = new Frame(Frame::Horizontal, new QMenu(), this);
+            Frame *frame = new Frame(Frame::Horizontal, new QMenu(), this);
 			connect(frame, SIGNAL(rightKeySelected()), this, SLOT(slot_rightKeySelected()));
 			QHBoxLayout *hBoxLayout = new QHBoxLayout(frame);
 			hBoxLayout->setObjectName(_item->text(0));
@@ -137,10 +137,29 @@ void DropWidget::initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, 
 			frame->setLayout(hBoxLayout);
 			frame->setObjectName(_item->text(0));
 			//! TODO.
-			frame->setMinimumSize(406, 200);
+			QString size_str = _item->data(0, Qt::UserRole + 2).toString();
+			qDebug() << size_str << endl;
+			if (size_str != "")
+			{
+				frame->setMinimumSize(size_str.split(",").at(0).toInt(), size_str.split(",").at(1).toInt());
+			}
+			
 			frame->setFrameShape(QFrame::Box);
 			frame->setFrameShadow(QFrame::Plain);
 			frame->setVisible(true);
+
+			if (parent != NULL)
+			{
+				parent->layout()->addWidget(frame);
+			}
+
+            QString position_str = _item->data(0, Qt::UserRole + 1).toString();
+			qDebug() << position_str << endl;
+			if (position_str != "")
+			{
+				frame->move(position_str.split(",").at(0).toInt(), position_str.split(",").at(1).toInt());
+			}
+            
 			int _count = _item->childCount();
 			if (_count != 0)
 			{
@@ -157,10 +176,28 @@ void DropWidget::initUserPanelAccordindOneTreeWidgetItem(QTreeWidgetItem *item, 
 			frame->setLayout(vBoxLayout);
 			frame->setObjectName(_item->text(0));
 			//! TODO.
-			frame->setMinimumSize(200, 406);
+			QString size_str = _item->data(0, Qt::UserRole + 2).toString();
+			qDebug() << size_str << endl;
+			if (size_str != "")
+			{
+				frame->setMinimumSize(size_str.split(",").at(0).toInt(), size_str.split(",").at(1).toInt());
+			}
+
 			frame->setFrameShape(QFrame::Box);
 			frame->setFrameShadow(QFrame::Plain);
 			frame->setVisible(true);
+
+			if (parent != NULL)
+			{
+				parent->layout()->addWidget(frame);
+			}
+
+            QString position_str = _item->data(0, Qt::UserRole + 1).toString();
+			if (position_str != "")
+			{
+				frame->move(position_str.split(",").at(0).toInt(), position_str.split(",").at(1).toInt());
+			}
+            
 			int _count = _item->childCount();
 			if (_count != 0)
 			{

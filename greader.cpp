@@ -78,7 +78,17 @@ void GReader::readFolder(QTreeWidgetItem *item)
     Q_ASSERT(xml.isStartElement() && xml.name().contains(QLatin1String("LEVEL_")));
 
     QTreeWidgetItem *folder = createChildItem(item);
-	folder->setData(0, Qt::UserRole, xml.name().toString());
+	QString positionInfo = xml.attributes().value(positionAttribute()).toString();
+    if(positionInfo != "")
+    {
+		folder->setData(0, Qt::UserRole + 1, xml.attributes().value(positionAttribute()).toString());
+    }
+	QString sizeInfo = xml.attributes().value(sizeAttribute()).toString();
+	if (sizeInfo != "")
+	{
+		folder->setData(0, Qt::UserRole + 2, xml.attributes().value(sizeAttribute()).toString());
+	}
+    
     bool folded = (xml.attributes().value(foldedAttribute()) != QLatin1String("no"));
     treeWidget->setItemExpanded(folder, !folded);
 

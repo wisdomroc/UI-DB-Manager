@@ -36,13 +36,19 @@ void GWriter::writeItem(const QTreeWidgetItem *item)
         bool folded = !treeWidget->isItemExpanded(item);
         xml.writeStartElement(tagName);
         xml.writeAttribute(GReader::foldedAttribute(), folded ? yesValue() : noValue());
+        if(item->text(0).contains("horizontal") || item->text(0).contains("vertical"))
+        {
+			xml.writeAttribute(GReader::sizeAttribute(), item->data(0, Qt::UserRole + 2).toString());
+
+			if (tagName == "LEVEL_1")
+			{
+				xml.writeAttribute(GReader::positionAttribute(), item->data(0, Qt::UserRole + 1).toString());
+			}
+        }
         xml.writeTextElement(titleElement(), item->text(0));
         for (int i = 0; i < item->childCount(); ++i)
         {
-            if(item->text(0).contains("horizontal") || item->text(0).contains("vertical"))
-            {
 
-            }
 
             writeItem(item->child(i));
         }

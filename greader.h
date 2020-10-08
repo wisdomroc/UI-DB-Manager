@@ -71,6 +71,8 @@ public:
     static inline QString versionAttribute() { return QStringLiteral("version"); }
     static inline QString hrefAttribute() { return QStringLiteral("href"); }
     static inline QString foldedAttribute() { return QStringLiteral("folded"); }
+    static inline QString positionAttribute() { return QStringLiteral("position"); }
+	static inline QString sizeAttribute() { return QStringLiteral("size"); }
 
 private:
     void readG();

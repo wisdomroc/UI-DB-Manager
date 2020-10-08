@@ -136,6 +136,8 @@ void MainWindow::initOneTreeItem(Frame *frame, QTreeWidgetItem *item, int level)
         QHBoxLayout *hBoxLayout = (QHBoxLayout *)(frame->layout());
         QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(item, QStringList() << hBoxLayout->objectName());
         treeWidgetItem->setData(0, Qt::UserRole, tr("LEVEL_%1").arg(level));
+        treeWidgetItem->setData(0, Qt::UserRole + 1, tr("%1,%2").arg(frame->pos().x()).arg(frame->pos().y()));
+		treeWidgetItem->setData(0, Qt::UserRole + 2, tr("%1,%2").arg(frame->size().width()).arg(frame->size().height()));
         treeWidgetItem->setExpanded(true);
         item->addChild(treeWidgetItem);
         int childCount = hBoxLayout->count();
@@ -156,6 +158,8 @@ void MainWindow::initOneTreeItem(Frame *frame, QTreeWidgetItem *item, int level)
         
         QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(item, QStringList() << vBoxLayout->objectName());
         treeWidgetItem->setData(0, Qt::UserRole, tr("LEVEL_%1").arg(level));
+        treeWidgetItem->setData(0, Qt::UserRole + 1, tr("%1,%2").arg(frame->pos().x()).arg(frame->pos().y()));
+		treeWidgetItem->setData(0, Qt::UserRole + 2, tr("%1,%2").arg(frame->size().width()).arg(frame->size().height()));
         treeWidgetItem->setExpanded(true);
         item->addChild(treeWidgetItem);
         int childCount = vBoxLayout->count();
@@ -378,8 +382,11 @@ void MainWindow::saveUserPanelToFile(const QString &fileName)
     }
 
     GWriter writer(ui->treeWidget);
-    if (writer.writeFile(&file))
-        statusBar()->showMessage(tr("File saved"), 2000);
+	if (writer.writeFile(&file))
+	{
+		QMessageBox::information(this, tr("提示"), tr("保存文件成功！"));
+		statusBar()->showMessage(tr("File saved"), 2000);
+	} 
 }
 
 void MainWindow::on_horizontalLay_clicked()
