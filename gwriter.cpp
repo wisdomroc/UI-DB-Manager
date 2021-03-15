@@ -39,11 +39,15 @@ void GWriter::writeItem(const QTreeWidgetItem *item)
         if(item->text(0).contains("horizontal") || item->text(0).contains("vertical"))
         {
 			xml.writeAttribute(GReader::sizeAttribute(), item->data(0, Qt::UserRole + 2).toString());
-
+            xml.writeAttribute(GReader::groupAttribute(), item->data(0, Qt::UserRole + 3).toString());
 			if (tagName == "LEVEL_1")
 			{
 				xml.writeAttribute(GReader::positionAttribute(), item->data(0, Qt::UserRole + 1).toString());
 			}
+        }
+        else
+        {
+            xml.writeAttribute(GReader::groupAttribute(), item->data(0, Qt::UserRole + 3).toString());
         }
         xml.writeTextElement(titleElement(), item->text(0));
         for (int i = 0; i < item->childCount(); ++i)

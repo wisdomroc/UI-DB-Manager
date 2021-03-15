@@ -3,6 +3,7 @@
 
 #include "fwd.h"
 #include "frame.h"
+#include "databasemanager.h"
 #include <QMainWindow>
 
 namespace Ui {
@@ -16,6 +17,15 @@ extern map<QString, QString> g_controlsPngMap;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+    enum DatabaseType {
+        SSK,        //实时库
+        DMK,        //达蒙库
+        MySQL,
+        SQLITE,
+        SqlServer,
+        Oracle
+    };
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -39,6 +49,7 @@ private:
 	void selectOneFrame(Frame *frame, QString name);
 	void preInitTreeWidget();
 
+    void saveIni();
     void zoomIn(int level);
     void zoomOut(int level);
 	Frame *findRootParent(Frame *_item);
@@ -58,12 +69,33 @@ private slots:
     void on_horizontalLay_clicked();
     void on_verticalLay_clicked();
 
+    void on_pushButton_connect_clicked();
+
+    void on_comboBox_tableNames_activated(const QString &tableName);
+
+    void on_pushButton_add_clicked();
+
+    void on_treeWidget_customContextMenuRequested(const QPoint &pos);
+
+    void slot_setGroup();
+
 private:
     Ui::MainWindow		*ui;
+    QTreeWidgetItem     *m_topLevelItem;
+    DatabaseManager     *m_databaseManager;
 
-	QTreeWidgetItem		*m_topLevelItem;
     int					m_horizontalNumber;
     int					m_verticalNumber;
+
+    int                 m_indexDatabaseType;
+    DatabaseType        m_databaseType;
+    QString             m_ip;
+    QString             m_port;
+    QString             m_dbName;
+    QString             m_username;
+    QString             m_password;
+    QString             m_dbInfos;
+    QStringList         m_groupNames;
 };
 
 #endif // MAINWINDOW_H

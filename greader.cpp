@@ -80,14 +80,22 @@ void GReader::readFolder(QTreeWidgetItem *item)
     QTreeWidgetItem *folder = createChildItem(item);
 	QString positionInfo = xml.attributes().value(positionAttribute()).toString();
     if(positionInfo != "")
-    {
+    {   //! UserRole + 1 是 Position
 		folder->setData(0, Qt::UserRole + 1, xml.attributes().value(positionAttribute()).toString());
     }
 	QString sizeInfo = xml.attributes().value(sizeAttribute()).toString();
 	if (sizeInfo != "")
-	{
+    {   //! UserRole + 2 是 Size
 		folder->setData(0, Qt::UserRole + 2, xml.attributes().value(sizeAttribute()).toString());
 	}
+    QString groupInfo = xml.attributes().value(groupAttribute()).toString();
+    if (groupInfo != "")
+    {   //! UserRole + 3 是 已设置group，即前面出现图标
+        folder->setData(0, Qt::UserRole + 3, xml.attributes().value(groupAttribute()).toString());
+        QPixmap pixmap(":/image/ui_db_manager.ico");
+        pixmap = pixmap.scaled(20, 20);
+        folder->setData(0, Qt::DecorationRole, pixmap);
+    }
     
     bool folded = (xml.attributes().value(foldedAttribute()) != QLatin1String("no"));
     treeWidget->setItemExpanded(folder, !folded);

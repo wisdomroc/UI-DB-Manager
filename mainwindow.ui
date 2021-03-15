@@ -35,6 +35,12 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -64,7 +70,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>180</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -84,9 +90,15 @@
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>180</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -94,30 +106,25 @@
           <string>数据库配置</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
-          <property name="leftMargin">
-           <number>6</number>
-          </property>
-          <property name="topMargin">
-           <number>6</number>
-          </property>
-          <property name="rightMargin">
-           <number>6</number>
-          </property>
-          <property name="bottomMargin">
-           <number>6</number>
-          </property>
           <item>
            <layout class="QGridLayout" name="gridLayout">
-            <item row="3" column="1">
-             <widget class="QLineEdit" name="lineEdit_username"/>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLineEdit" name="lineEdit_password"/>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label">
+            <property name="horizontalSpacing">
+             <number>0</number>
+            </property>
+            <property name="verticalSpacing">
+             <number>6</number>
+            </property>
+            <item row="7" column="1">
+             <widget class="QLineEdit" name="lineEdit_connectResult">
               <property name="text">
-               <string>DatabaseType：</string>
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Connect Result:</string>
               </property>
              </widget>
             </item>
@@ -155,374 +162,128 @@
               </item>
              </widget>
             </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>IP：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLineEdit" name="lineEdit_password"/>
+            </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>UserName：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="1">
-             <widget class="QComboBox" name="comboBox_tableNames">
-              <item>
-               <property name="text">
-                <string>TableInfo1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>TableInfo2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>TableInfo3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>TableInfo4</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>TableInfo5</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QLineEdit" name="lineEdit_connectResult">
-              <property name="text">
-               <string>连接成功！</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
              <widget class="QLabel" name="label_6">
               <property name="text">
-               <string>DatabaseName:</string>
+               <string>数据库名称:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>密码：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="1">
+             <widget class="QComboBox" name="comboBox_tableNames"/>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="lineEdit_ip"/>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="lineEdit_username"/>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>数据库类型：</string>
               </property>
              </widget>
             </item>
             <item row="4" column="0">
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel" name="label_4">
               <property name="text">
-               <string>Password：</string>
+               <string>用户名：</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Connect Result:</string>
-              </property>
-             </widget>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="lineEdit_databaseName"/>
             </item>
-            <item row="8" column="0">
+            <item row="9" column="0">
              <widget class="QLabel" name="label_2">
               <property name="text">
                <string>TableNames：</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>HostName：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0" colspan="2">
+            <item row="6" column="0" colspan="2">
              <widget class="QPushButton" name="pushButton_connect">
               <property name="text">
                <string>Connect</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEdit_hostName"/>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEdit_databaseName"/>
-            </item>
-            <item row="7" column="0" colspan="2">
-             <widget class="Line" name="line">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_15">
+              <property name="text">
+               <string>端口:</string>
               </property>
              </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="lineEdit_port"/>
             </item>
            </layout>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_2">
-            <property name="title">
-             <string>字段选择与对应表头：</string>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <item row="0" column="0">
-              <widget class="QComboBox" name="comboBox_col1">
-               <item>
-                <property name="text">
-                 <string>Column 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 4</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 5</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 6</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="lineEdit_col1_name">
-               <property name="text">
-                <string>断面</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QComboBox" name="comboBox_col2">
-               <item>
-                <property name="text">
-                 <string>Column 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 4</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 5</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 6</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="lineEdit_col2_name">
-               <property name="text">
-                <string>实时值</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QComboBox" name="comboBox_col3">
-               <item>
-                <property name="text">
-                 <string>Column 3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 4</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 5</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 6</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="lineEdit_col3_name">
-               <property name="text">
-                <string>上限</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QComboBox" name="comboBox_col4">
-               <item>
-                <property name="text">
-                 <string>Column 4</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 5</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 6</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="lineEdit_col4_name">
-               <property name="text">
-                <string>下限</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QComboBox" name="comboBox_col5">
-               <item>
-                <property name="text">
-                 <string>Column 5</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 4</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 6</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QLineEdit" name="lineEdit_col5_name">
-               <property name="text">
-                <string>开机台数</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QComboBox" name="comboBox_col6">
-               <item>
-                <property name="text">
-                 <string>Column 6</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 4</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Column 5</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QLineEdit" name="lineEdit_col6_name">
-               <property name="text">
-                <string>计划</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="0">
-              <widget class="QPushButton" name="pushButton_addRow">
-               <property name="text">
-                <string>添加行</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="1">
-              <widget class="QPushButton" name="pushButton_deleteRow">
-               <property name="text">
-                <string>删除行</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
            </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_map"/>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="label_16">
+              <property name="text">
+               <string>自定义名称：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_title"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_add">
+            <property name="text">
+             <string>加入</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_show"/>
           </item>
          </layout>
         </widget>
@@ -794,6 +555,9 @@
            <width>16777215</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
          </property>
          <attribute name="headerVisible">
           <bool>false</bool>

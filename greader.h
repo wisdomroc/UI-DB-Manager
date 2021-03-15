@@ -73,6 +73,7 @@ public:
     static inline QString foldedAttribute() { return QStringLiteral("folded"); }
     static inline QString positionAttribute() { return QStringLiteral("position"); }
 	static inline QString sizeAttribute() { return QStringLiteral("size"); }
+    static inline QString groupAttribute() { return QStringLiteral("group"); }
 
 private:
     void readG();
